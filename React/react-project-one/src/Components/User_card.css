@@ -1,0 +1,33 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body
+{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.class 
+{
+    height: 350px;
+    width: 250px;
+    background-color: gray;
+    padding-top: 20px;
+    padding-left: 20px;
+
+}
+.class #user-image
+{
+    height: 100px;
+    width: 200px;
+    margin-top: 50px;
+}
+.class #user-description
+{
+    margin-top: 50px;
+}

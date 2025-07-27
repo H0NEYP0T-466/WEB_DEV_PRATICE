@@ -1,0 +1,127 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+:root {
+    --primary-color: #333;
+    --secondary-color: #666;
+    --background-color: #f2f2f2;
+  }
+header{
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 1280px;
+    height: 90px;
+    background-color: black;
+    color: white;
+    font-size: xx-large;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+#logo
+{
+    max-width: 92px;
+    max-height: 100px;
+    justify-content:start;
+    align-items: start;
+}
+#navbar
+{
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+    width: 1280px;
+    height: 70px;
+    background-color: orange;
+    color: white;
+}
+#unorderlist li a
+{
+    margin-right: 50px;
+}
+#unorderlist
+{
+    list-style: none;
+}
+h3{
+    color: white;
+    font-size: xx-large;
+    font-style:normal;
+}
+p{
+    color:black;
+    font-size:x-large;
+    font-style:normal;
+}
+h2{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: xx-large;
+}
+
+#paraid {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: red;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.3s ease-in-out, background-color 0.3s ease-in-out;
+    margin: 0 auto;
+    display: table;
+  }
+  
+  #paraid:hover {
+    transform: scale(1.1);
+    background-color: green;
+  }
+  
+  #paraid:hover span {
+    display: none;
+  }
+  
+  #paraid:hover::after {
+    content: "Buy Now!";
+    display: block;
+    text-align: center;
+  }
+  
+  
+  
+#skin
+{
+    max-width: 400px;
+    max-height: 400px;
+    transition: transform 0.3s ease-in-out;
+    display: block;
+    margin: 0 auto;
+}
+  
+#skin:hover {
+    transform: scale(1.2) translateX(50%) translateY(50%) translateX(-50%) translateY(-50%);
+    position: relative;
+}
+ 
+#m4-section
+{
+    background-color: snow;
+}
+#akm-section
+{
+    background-color:firebrick;
+}
+#x-suit
+{
+    background-color: gold;
+}
+#divid
+{
+    background-color: skyblue;
+}
