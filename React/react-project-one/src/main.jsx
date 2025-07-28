@@ -1,11 +1,12 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.jsx'
-import Counter  from './Components/Counter.jsx'
+import New_card from './Components/New_card.jsx'
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <Counter/>
-  </StrictMode>,
+
+  <New_card name="hello jee">
+    <h1>honeyPOT</h1>
+  </New_card>
+  
 )

@@ -7,10 +7,11 @@ const Counter = () => {
   return (
     <div className='box'>
         <p id='para'>You have clicked this button {num} times:</p>
-        <button id='but' onClick={()=>{manu(num+1)}}>Click ME</button>
+        <button id='but' onClick={()=>manu(num+1)}>Click ME</button>
 
     </div>
   )
 }
-
+ 
 export default Counter
+

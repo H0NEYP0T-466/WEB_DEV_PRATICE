@@ -1,5 +1,5 @@
 import './App.css'
-import User_card from './Components/User_card'
+import User_card from './Components/user_card'
 import m4 from './assets/m4.jpeg'
 import m4f from './assets/m4fool.jpg'
 import akm from './assets/akm.webp'
