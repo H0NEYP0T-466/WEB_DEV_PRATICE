@@ -1,19 +1,19 @@
-
-import m4 from './assets/m4.jpeg'
-import m4f from './assets/m4fool.jpg'
-import akm from './assets/akm.webp'
 import React, { use, useState } from 'react';
-import Login from './Components/Login';
-import Fucking_Logout from './Components/Fucking_Logout';
+import Color_Change from './Components/Color_Change';
 
 function App() {
-  const [islogedin, setlogin] = useState(false);
+  return
+  (
+    <div>
+          <Color_Change>
 
-  if (islogedin) {
-    return <Fucking_Logout/>;
-  } else {
-    return <Login/>;
-  }
+    </Color_Change>
+
+    </div>
+
+  )
+
+ 
 }
 
 
@@ -52,7 +52,13 @@ export default App
         
         
         
-        
+         const [islogedin, setlogin] = useState(false);
+
+  if (islogedin) {
+    return <Fucking_Logout/>;
+  } else {
+    return <Login/>;
+  }
         
         
         

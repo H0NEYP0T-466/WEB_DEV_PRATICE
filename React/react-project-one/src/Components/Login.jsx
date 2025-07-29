@@ -3,7 +3,8 @@ import React from 'react'
 const Login = () => {
   return (
     <div>
-        <button>LOGIN</button>
+        <button onClick={()=>alert("baz ajao")}>LOGIN</button>
+         <button onClick={alert("baz ajao")}>LOGIN</button>
       
     </div>
   )
