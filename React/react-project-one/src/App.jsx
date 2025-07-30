@@ -1,23 +1,23 @@
-import React, { use, useContext, useState } from 'react';
+import React, { createContext, use, useContext, useState } from 'react';
 import Child_1 from './Components/Child_1';
 
-const UserContent = useContext
+const UserContent = createContext();
 
 function App() {
 
 
-
+const [user, setUser] = useState({name: "John Doe"});
   return (
     <div>
-      <UserContent.provider>
+      <UserContent.Provider value={user}>
       <Child_1/>
-      </UserContent.provider>
+      </UserContent.Provider>
     </div>
   )
 }
 
-
-export default App
+export default App;
+export { UserContent };
  /* <div className='container'>
       <User_card name="HONEYPOT" desc="1st" image={m4} style={{"border-radius":"10px"}}/>
       <User_card name="honeypot" desc="2st" image={m4f} style={{"border-radius":"10px"}}/>
