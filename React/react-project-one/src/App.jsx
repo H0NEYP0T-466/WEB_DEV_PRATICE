@@ -1,19 +1,19 @@
-import React, { use, useState } from 'react';
-import Color_Change from './Components/Color_Change';
+import React, { use, useContext, useState } from 'react';
+import Child_1 from './Components/Child_1';
+
+const UserContent = useContext
 
 function App() {
-  return
-  (
+
+
+
+  return (
     <div>
-          <Color_Change>
-
-    </Color_Change>
-
+      <UserContent.provider>
+      <Child_1/>
+      </UserContent.provider>
     </div>
-
   )
-
- 
 }
 
 
