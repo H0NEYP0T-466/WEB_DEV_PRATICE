@@ -1,16 +1,18 @@
 import React, { createContext, use, useContext, useState } from 'react';
 import Child_1 from './Components/Child_1';
+import './App.css';
 
 const UserContent = createContext();
 
 function App() {
 
 
-const [user, setUser] = useState({name: "John Doe"});
+const [user, setUser] = useState({name: "Light"});
   return (
-    <div>
-      <UserContent.Provider value={user}>
+    <div id='div'style={{backgroundColor: user.name === "Light" ? "beige" : "black"}}>
+      <UserContent.Provider value={{user,setUser}}>
       <Child_1/>
+    
       </UserContent.Provider>
     </div>
   )

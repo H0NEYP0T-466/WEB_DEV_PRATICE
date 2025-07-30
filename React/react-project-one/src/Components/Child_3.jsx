@@ -3,10 +3,13 @@ import { useContext } from 'react'
 import { UserContent } from '../App'
 
 const Child_3 = () => {
-  const user= useContext(UserContent);
+  const {user,setUser}= useContext(UserContent);
+  function changeTheme() {
+    setUser({name: user.name === "Light" ? "Dark" : "Light"});
+  }
   return (
     <div>
-      {user.name}
+      <button onClick={changeTheme}>Change Theme</button>
     </div>
   )
 } 

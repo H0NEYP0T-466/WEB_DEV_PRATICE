@@ -12,8 +12,13 @@ html ,body
 }
 #div
 {
-  height: 100px;
-  width: 100px;
-  background-color: red;
+  height: 200px;
+  width: 200px;
+  background-color: beige;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  margin: 190px auto;
 }
 
