@@ -1,14 +1,34 @@
 import React, { createContext, use, useContext, useState } from 'react';
-import Child_1 from './Components/Child_1';
 import './App.css';
-
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import Home from './Components/Home';
+import About from './Components/About';
+import Dashboard from './Components/Dashboard';
 //const UserContent = createContext();
-
+const router = createBrowserRouter(
+  [
+    {
+      path:'/',
+      element: <Home/>,
+    },
+    {
+      path:'/about',
+      element:<About/>
+    },
+    {
+      path:'/dashboard',
+      element:<Dashboard/>
+    }
+  ]
+);
 function App() {
 
   return(
     <div>
-      Hello World
+    <RouterProvider router={router} />
     </div>
    
   )

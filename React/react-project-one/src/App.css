@@ -10,15 +10,3 @@ html ,body
   width: 100%;
 
 }
-#div
-{
-  height: 200px;
-  width: 200px;
-  background-color: beige;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 10px;
-  margin: 190px auto;
-}
-
