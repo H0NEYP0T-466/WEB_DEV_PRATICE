@@ -9,6 +9,9 @@ import About from './Components/About';
 import Dashboard from './Components/Dashboard';
 import NavBar from './Components/NavBar';
 import Params from './Components/Params';
+import Projects from './Components/Projects';
+import Tasks from './Components/Tasks';
+import NotFound from './Components/NotFound';
 
 
 
@@ -31,14 +34,24 @@ const router = createBrowserRouter(
       
       </div>
     },
-    {
-      path:'/dashboard',
-      element:
-      <div>
-        <NavBar/>
+  {
+  path:'/dashboard',
+  element:
+    <div>
+      <NavBar/>
       <Dashboard/>
-        </div>
+    </div>,
+  children: [ // <-- fix here
+    {
+      path:'projects',
+      element:<Projects/>
     },
+    {
+      path:'tasks',
+      element:<Tasks/>
+    },
+  ]
+},
       {
       path:'/student/:id',
       element:
@@ -47,6 +60,10 @@ const router = createBrowserRouter(
         <Params/>
       
         </div>
+    },
+    {
+      path:'*',
+      element:<NotFound></NotFound>
     }
   ]
 );
