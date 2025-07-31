@@ -16,25 +16,26 @@ const router = createBrowserRouter(
     {
       path:'/',
       element: <div>
-        <Home/>
         <NavBar/>
+        <Home/>
       </div>
     },
     {
       path:'/about',
       element:
       <div>
-      <About/>
       <NavBar/>
+      <About/>
+      
       </div>
     },
     {
       path:'/dashboard',
       element:
       <div>
-    
+        <NavBar/>
       <Dashboard/>
-      <NavBar/>
+      
         </div>
     }
   ]
@@ -42,7 +43,7 @@ const router = createBrowserRouter(
 function App() {
 
   return(
-    <div>
+    <div id='div'>
     
     <RouterProvider router={router} />
     </div>
