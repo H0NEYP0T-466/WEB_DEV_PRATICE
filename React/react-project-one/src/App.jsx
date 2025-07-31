@@ -8,6 +8,7 @@ import Home from './Components/Home';
 import About from './Components/About';
 import Dashboard from './Components/Dashboard';
 import NavBar from './Components/NavBar';
+import Params from './Components/Params';
 
 
 //const UserContent = createContext();
@@ -35,6 +36,15 @@ const router = createBrowserRouter(
       <div>
         <NavBar/>
       <Dashboard/>
+      
+        </div>
+    },
+      {
+      path:'/student/:id',
+      element:
+      <div>
+        <NavBar/>
+        <Params/>
       
         </div>
     }
