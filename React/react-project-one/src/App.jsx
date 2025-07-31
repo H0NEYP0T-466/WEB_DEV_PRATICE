@@ -2,24 +2,20 @@ import React, { createContext, use, useContext, useState } from 'react';
 import Child_1 from './Components/Child_1';
 import './App.css';
 
-const UserContent = createContext();
+//const UserContent = createContext();
 
 function App() {
 
-
-const [user, setUser] = useState({name: "Light"});
-  return (
-    <div id='div'style={{backgroundColor: user.name === "Light" ? "beige" : "black"}}>
-      <UserContent.Provider value={{user,setUser}}>
-      <Child_1/>
-    
-      </UserContent.Provider>
+  return(
+    <div>
+      Hello World
     </div>
+   
   )
 }
 
 export default App;
-export { UserContent };
+
  /* <div className='container'>
       <User_card name="HONEYPOT" desc="1st" image={m4} style={{"border-radius":"10px"}}/>
       <User_card name="honeypot" desc="2st" image={m4f} style={{"border-radius":"10px"}}/>
@@ -63,9 +59,14 @@ export { UserContent };
   }
         
         
-        
-        
-        
+         <div id='div'style={{backgroundColor: user.name === "Light" ? "beige" : "black"}}>
+      <UserContent.Provider value={{user,setUser}}>
+      <Child_1/>
+    
+      </UserContent.Provider>
+    </div>
+        const [user, setUser] = useState({name: "Light"});
+        export { UserContent };
         
         
         
