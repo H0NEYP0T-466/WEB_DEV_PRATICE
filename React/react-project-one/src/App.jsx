@@ -11,6 +11,7 @@ import NavBar from './Components/NavBar';
 import Params from './Components/Params';
 
 
+
 //const UserContent = createContext();
 const router = createBrowserRouter(
   [
@@ -36,7 +37,6 @@ const router = createBrowserRouter(
       <div>
         <NavBar/>
       <Dashboard/>
-      
         </div>
     },
       {
