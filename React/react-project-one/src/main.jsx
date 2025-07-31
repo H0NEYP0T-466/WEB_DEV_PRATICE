@@ -2,14 +2,11 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'
 import { store } from './redux/store'
-import UseRef from './Components/UseRef'
-import UserefHOOKDOM from './Components/UserefHOOKDOM'
-
+import App from './App'
 
 createRoot(document.getElementById('root')).render(
-<StrictMode>
-    <UserefHOOKDOM></UserefHOOKDOM>
-</StrictMode>
+
+<App></App>
   
 )
 

@@ -1,36 +1,23 @@
 import React, { createContext, use, useContext, useState } from 'react';
-import './App.css';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
-import { increment, decrement, reset} from './Features/Slice/Counter'
-
+import Child_Component from './Components/Child_Component';
 
 function App() {
-  const count=useSelector((state) => state.counter.value);
-  const dispatch = useDispatch();
-
-  function inc()
-  {
-    dispatch(increment());
-  }
-  function dec()
-  {
-    dispatch(decrement());
-  }
-    function res()
-  {
-    dispatch(reset());
-  }
+  const [data, setData] = useState(0);
 
   return(
     <div id='div'>
-      
-      <button onClick={inc}>+</button>
-      <p>Count:{count}</p>
-       <button onClick={dec}>-</button>
-       <button onClick={res}>Reset</button>
-    
-    
+      <button onClick={()=>{
+        setData(data + 1);
+      }}>Click Me</button>
+
+      <h1>{data}</h1>
+
+      <div>
+        <Child_Component name="honeypot"/>
+       
+      </div>
     </div>
    
   )
@@ -158,5 +145,26 @@ import NotFound from './Components/NotFound';
   ]
 );
         
-        
+
+
+<button onClick={inc}>+</button>
+      <p>Count:{count}</p>
+       <button onClick={dec}>-</button>
+       <button onClick={res}>Reset</button>
+         const count=useSelector((state) => state.counter.value);
+  const dispatch = useDispatch();
+
+  function inc()
+  {
+    dispatch(increment());
+  }
+  function dec()
+  {
+    dispatch(decrement());
+  }
+    function res()
+  {
+    dispatch(reset());
+  }
+
         */
