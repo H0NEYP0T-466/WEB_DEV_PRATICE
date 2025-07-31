@@ -7,20 +7,35 @@ import {
 import Home from './Components/Home';
 import About from './Components/About';
 import Dashboard from './Components/Dashboard';
+import NavBar from './Components/NavBar';
+
+
 //const UserContent = createContext();
 const router = createBrowserRouter(
   [
     {
       path:'/',
-      element: <Home/>,
+      element: <div>
+        <Home/>
+        <NavBar/>
+      </div>
     },
     {
       path:'/about',
-      element:<About/>
+      element:
+      <div>
+      <About/>
+      <NavBar/>
+      </div>
     },
     {
       path:'/dashboard',
-      element:<Dashboard/>
+      element:
+      <div>
+    
+      <Dashboard/>
+      <NavBar/>
+        </div>
     }
   ]
 );
@@ -28,6 +43,7 @@ function App() {
 
   return(
     <div>
+    
     <RouterProvider router={router} />
     </div>
    
