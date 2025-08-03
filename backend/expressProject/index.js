@@ -1,25 +1,29 @@
-let a=require('express');
-let b=a();
+let express=require('express');
+let app=express();
+require('dotenv').config();
+let a=process.env.token;
+console.log('Token from .env:', a); 
+app.use(middleware)
 
-b.use(a.json());
 
-b.get('/', (req, res) => {
-    res.send('home page');
+
+app.get('/', (req, res) => {
+    res.send('Hello World Honeypot');
 });
 
-b.get('/users', (req, res) => {
-    let a = req.params.id;
-    res.send('users page',a);
+app.get('/news', (req, res) => {
+    let a= req.query.id;
+    res.send('This is the news page'+a);
 });
 
+function middleware(req, res, next) {
 
-b.get('/users:id', (req, res) => {
-  let a = req.params.id;
-    res.send('users page'+a)
-});
+    if(req.query.id !== a) {
+         let b= req.query.id;
+  
+        return res.status(401).send('Unauthorized'+b);    
+}
+next();
+}
 
-b.post('/login', (req, res) => {
-    console.log(req.body);
-});
-
-b.listen(8000)
+app.listen(8000)
