@@ -6,5 +6,4 @@ let server=http.createServer((request,response) =>
     }
     response.end('Hello World Honeypot');
 });
-
 server.listen("8000")
