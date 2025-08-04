@@ -24,6 +24,14 @@ app.delete('/studentDelete', async(req, res) => {
     res.send('Student Deleted: ' + result.deletedCount);
 });
 
+
+app.put('/studentUpdate', async(req, res) => {
+
+     let db = await dbConnection();
+    let collection =  db.collection('students');
+    let result = await collection.updateOne({sName:"kratos"}, {$set: {sAge: 39}});
+    res.send('Student updated: ' + result.modifiedCount);
+});
 app.post('/studentInsert',middleware, async(req, res) => {
     let db = await dbConnection();
     let collection = db.collection('students');
