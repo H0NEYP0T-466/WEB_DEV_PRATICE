@@ -9,7 +9,7 @@ app.use(express.json());
 app.get('/studentRead', async(req, res) => {
 
      let db = await dbConnection();
-    let collection = db.collection('students');
+    let collection =  db.collection('students');
     let data= await collection.find().toArray();
     res.send(data);
 });
