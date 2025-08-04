@@ -1,4 +1,5 @@
 let express=require('express');
+const { ObjectId } = require('mongodb');
 let dbConnection = require('../mongoDB/dbConnection');
 let app=express();
 
@@ -12,6 +13,15 @@ app.get('/studentRead', async(req, res) => {
     let collection =  db.collection('students');
     let data= await collection.find().toArray();
     res.send(data);
+});
+
+app.delete('/studentDelete', async(req, res) => {
+
+     let db = await dbConnection();
+    let collection =  db.collection('students');
+    let id = "6891105706d8cbe25bb7eaaa";
+    let result = await collection.deleteOne({_id: new ObjectId(id)});
+    res.send('Student Deleted: ' + result.deletedCount);
 });
 
 app.post('/studentInsert',middleware, async(req, res) => {
