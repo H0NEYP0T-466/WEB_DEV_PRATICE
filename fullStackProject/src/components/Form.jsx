@@ -1,6 +1,95 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const UserEnquiryForm = () => {
+  const [enquiries, setEnquiries] = useState([]);
+
+  // Fetch all enquiries on mount
+  const fetchEnquiries = () => {
+    axios.get('http://localhost:8000/enquiries')
+      .then(res => setEnquiries(res.data))
+      .catch(err => console.error("Failed to fetch enquiries:", err));
+  };
+
+  useEffect(() => {
+    fetchEnquiries();
+  }, []);
+
+  // Handle form submit
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    axios.post('http://localhost:8000/insert', {
+      name: e.target.name.value,
+      email: e.target.email.value,
+      phoneNumber: e.target.phone.value,
+      message: e.target.message.value
+    })
+      .then(() => {
+        alert("Enquiry Submitted Successfully");
+        e.target.reset();
+        fetchEnquiries();
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error submitting enquiry. Please try again.");
+      });
+  }
+
+  // Delete handler
+  const handleDelete = async (name) => {
+    try {
+      await axios.post("http://localhost:8000/delete", { name });
+      alert("Enquiry Deleted");
+      fetchEnquiries();
+    } catch (err) {
+      console.error(err);
+      alert("Delete failed");
+    }
+  };
+
+  // Update handler
+  const handleUpdate = async (entry) => {
+    const updatedName = prompt("Enter new name:", entry.name);
+    const updatedEmail = prompt("Enter new email:", entry.email);
+    const updatedPhone = prompt("Enter new phone number:", entry.phone);
+    const updatedMessage = prompt("Enter new message:", entry.message);
+  
+    if (!updatedName || !updatedEmail || !updatedPhone || !updatedMessage) {
+      alert("Update canceled. All fields are required.");
+      return;
+    }
+  
+    const updatedEntry = {
+      _id: entry._id, // Send the MongoDB _id
+      name: updatedName,
+      email: updatedEmail,
+      phone: updatedPhone,
+      message: updatedMessage
+    };
+  
+    try {
+      const response = await fetch("http://localhost:8000/update", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ entry: updatedEntry }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Update failed.");
+      }
+  
+      alert("Enquiry updated successfully.");
+      window.location.reload(); // Refresh to show updates
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong during update.");
+    }
+  };
+  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
@@ -8,10 +97,10 @@ const UserEnquiryForm = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-indigo-800 mb-2">User Enquiry System</h1>
           <p className="text-gray-600">Submit and manage user enquiries efficiently</p>
         </header>
-        
+
         <div className="bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="md:flex">
-            {/* Left Panel - Enquiry Form */}
+            {/* Enquiry Form */}
             <div className="md:w-1/2 p-6 border-r border-gray-200">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
@@ -19,65 +108,35 @@ const UserEnquiryForm = () => {
                 </svg>
                 Enquiry Form
               </h2>
-              
-              <form className="space-y-4">
+
+              <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-                  <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Enter your name"
-                  />
+                  <input type="text" id="name" name="name" className="w-full px-4 py-2 border rounded-lg" required />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">Your Email</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Enter your email"
-                  />
+                  <input type="email" id="email" name="email" className="w-full px-4 py-2 border rounded-lg" required />
                 </div>
-                
+
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Your Phone</label>
-                  <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Enter your phone number"
-                  />
+                  <input type="tel" id="phone" name="phone" className="w-full px-4 py-2 border rounded-lg" required />
                 </div>
-                
+
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">Your Message</label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows="4"
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-                    placeholder="Enter your message"
-                  ></textarea>
+                  <textarea id="message" name="message" rows="4" className="w-full px-4 py-2 border rounded-lg" required></textarea>
                 </div>
-                
-                <button
-                  type="button"
-                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition duration-300 flex items-center justify-center"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                  Save Enquiry
+
+                <button type="submit" className="w-full bg-indigo-600 text-white font-medium py-2 px-4 rounded-lg hover:bg-indigo-700">
+                  Submit Enquiry
                 </button>
               </form>
             </div>
-            
-            {/* Right Panel - Enquiry List */}
+
+            {/* Enquiry List */}
             <div className="md:w-1/2 p-6 bg-gray-50">
               <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
@@ -85,36 +144,61 @@ const UserEnquiryForm = () => {
                 </svg>
                 Enquiry List
               </h2>
-              
-              <div className="text-center py-8 text-gray-500">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                </svg>
-                <p className="mt-2">No enquiries yet. Submit your first enquiry!</p>
-              </div>
-              
-              {/* Table structure for when data is added later */}
-              <div className="overflow-x-auto hidden">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-100">
-                    <tr>
-                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SR NO</th>
-                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NAME</th>
-                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EMAIL</th>
-                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">PHONE</th>
-                      <th scope="col" className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MESSAGE</th>
-                      <th scope="col" className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">ACTIONS</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {/* Table rows will be added when you implement the backend */}
-                  </tbody>
-                </table>
-              </div>
+
+              {enquiries.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <p className="mt-2">No enquiries yet. Submit your first enquiry!</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-100">
+                      <tr>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">SR NO</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">NAME</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">EMAIL</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">PHONE</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">MESSAGE</th>
+                        <th className="px-16 py-2 text-left text-xs font-medium text-gray-500 uppercase">ACTIONS</th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {enquiries.map((entry, index) => (
+                        <tr key={entry._id}>
+                          <td className="px-4 py-2">{index + 1}</td>
+                          <td className="px-4 py-2">{entry.name}</td>
+                          <td className="px-4 py-2">{entry.email}</td>
+                          <td className="px-4 py-2">{entry.phoneNumber}</td>
+                          <td className="px-4 py-2">{entry.message}</td>
+                          <td className="px-4 py-2 space-x-2">
+                          <div className="flex space-x-2">
+                          <button
+                            onClick={() => handleDelete(entry.name)}
+                            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm shadow"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            onClick={() => handleUpdate(entry)}
+                            className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm shadow"
+                          >
+                            Update
+                          </button>
+                        </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
+
         <footer className="mt-8 text-center text-gray-500 text-sm">
           <p>© 2025 User Enquiry System. All rights reserved.</p>
         </footer>
