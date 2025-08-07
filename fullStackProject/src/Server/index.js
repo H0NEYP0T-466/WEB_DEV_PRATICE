@@ -9,6 +9,7 @@ app.use(cors());
 
 
 
+
 app.post('/insert',enquiryInsert);
 app.post('/delete',enquiryDelete);
 app.post('/update',enquiryUpdate);
