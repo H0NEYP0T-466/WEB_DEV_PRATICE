@@ -8,7 +8,7 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 })
 
-app.get('/ai',generateRES);
+app.post('/ai',generateRES);
 
 
 

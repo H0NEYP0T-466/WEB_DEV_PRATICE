@@ -1,7 +1,8 @@
 const generateGeminiResponse = require('../model/ai_model.js');
 const generateRES= async (req, res) => {
   try {
-    const prompt = req.query.q || "Hello?"; 
+    const prompt = req.body.prompt || "Hello?"; 
+
     const reply = await generateGeminiResponse(prompt);
     res.send(reply);
   } catch (err) {
