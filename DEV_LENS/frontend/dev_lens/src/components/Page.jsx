@@ -1,9 +1,16 @@
 import React from 'react'
-import Reveiw_page from "./Reveiw_page";
 import './Page.css'
+import { useNavigate } from 'react-router-dom';
+
+
 
 const Page = () => {
+  const navigate = useNavigate();
 
+  function handelClick()
+  {
+    navigate('/review');
+  }
   return (
     <div>
       <div id='page1'>
@@ -34,7 +41,8 @@ const Page = () => {
             <h4>Secure & Scalable Product Design</h4>
         </div>
   <div id="button-div">
-      <button className="review-btn" onClick={<Reveiw_page/>}>
+      <button className="review-btn" onClick={handelClick}>
+
         <span className="btn-text">Let's Review !</span>
       </button>
     </div>
