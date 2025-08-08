@@ -8,7 +8,7 @@ const Nav_bar = () => {
 
   const handleHover = () => {
   gsap.to(navBottomRef.current, {
-    height: "12vw",
+    height: "11vw",
     stagger: 0.1,
     duration: 0.2,
     ease: "expo.out", 
