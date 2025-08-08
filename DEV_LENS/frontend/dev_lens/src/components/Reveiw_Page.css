@@ -1,0 +1,136 @@
+.code-review-container {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  background-color: #111;
+  color: #e0e0e0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  margin: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  flex: 1;
+}
+
+.code-panel {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.response-panel {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+}
+
+.panel-header {
+  background-color: #222;
+  padding: 12px 15px;
+  border-bottom: 1px solid #333;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #4ade80; /* Green accent color */
+  font-weight: 500;
+}
+
+.code-input {
+  flex: 1;
+  width: 100%;
+  padding: 15px;
+  background-color: #111;
+  color: #e0e0e0;
+  border: none;
+  resize: none;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+  outline: none;
+}
+
+.code-input::placeholder {
+  color: #666;
+}
+
+.review-button {
+  margin: 15px;
+  padding: 10px 20px;
+  background-color: #4ade80; /* Green accent color */
+  color: #111;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  align-self: flex-end;
+}
+
+.review-button:hover {
+  background-color: #22c55e;
+}
+
+.review-button:disabled {
+  background-color: #444;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.response-content {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  background-color: #111;
+}
+
+.response-content h1, .response-content h2, .response-content h3 {
+  color: #4ade80;
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.response-content p {
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.response-content ul, .response-content ol {
+  padding-left: 20px;
+  margin-bottom: 12px;
+}
+
+.response-content li {
+  margin-bottom: 6px;
+}
+
+.response-content code {
+  background-color: #2a2a2a;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+.response-content pre {
+  background-color: #2a2a2a;
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+}
+
+.placeholder-text {
+  color: #666;
+  font-style: italic;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .code-review-container {
+    flex-direction: column;
+  }
+}

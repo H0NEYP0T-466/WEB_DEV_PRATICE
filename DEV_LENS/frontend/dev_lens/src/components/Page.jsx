@@ -1,4 +1,5 @@
 import React from 'react'
+import Reveiw_page from "./Reveiw_page";
 import './Page.css'
 
 const Page = () => {
@@ -33,7 +34,7 @@ const Page = () => {
             <h4>Secure & Scalable Product Design</h4>
         </div>
   <div id="button-div">
-      <button className="review-btn">
+      <button className="review-btn" onClick={<Reveiw_page/>}>
         <span className="btn-text">Let's Review !</span>
       </button>
     </div>
