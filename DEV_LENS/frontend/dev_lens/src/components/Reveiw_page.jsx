@@ -1,21 +1,30 @@
 import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import './Reveiw_Page.css';
+import axios from 'axios';
+
 
 const CodeReviewComponent = () => {
   const [code, setCode] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleReviewCode = () => {
-    setIsLoading(true);
-    // This is where you would normally make an API call to your backend
-    // For now, we'll simulate a response after a delay
-    setTimeout(() => {
-      setAiResponse("## Code Review Results\n\nYour code has been analyzed. Here are some observations:\n\n### Strengths\n- Clean and readable structure\n- Good variable naming\n\n### Suggestions\n- Consider adding more comments\n- Some functions could be simplified\n\n### Code Quality Score: 8/10");
-      setIsLoading(false);
-    }, 1500);
-  };
+
+const handleReviewCode = () => {
+  setIsLoading(true);
+  axios.post('http://localhost:8000/reveiw', {  
+    prompt: code
+  })
+  .then((res) => {
+    setAiResponse(res.data);
+    setIsLoading(false);
+  })
+  .catch((error) => {
+    console.error(error);
+    setIsLoading(false);
+  });
+};
+
 
   return (
     <div className="code-review-container">

@@ -1,6 +1,7 @@
 const generateGeminiResponse = require('../model/ai_model.js');
 const generateRES= async (req, res) => {
   try {
+     console.log('Received request at /review with body:', req.body);
     const prompt = req.body.prompt || "Hello?"; 
 
     const reply = await generateGeminiResponse(prompt);

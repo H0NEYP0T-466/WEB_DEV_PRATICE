@@ -1,7 +1,7 @@
 import React from 'react'
 import './Page.css'
 import { useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
 
 
 const Page = () => {
