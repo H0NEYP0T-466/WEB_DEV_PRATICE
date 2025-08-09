@@ -10,8 +10,6 @@ const io = socket(server);
 
 const chess = new Chess();
 let players = {};
-let currentPlayer = "w";
-let gameOver = false; // ✅ Prevents moves after game ends
 
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -21,18 +19,9 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-    console.log('player connected');
+    console.log('player connected', socket.id);
 
-    socket.on('disconnect', () => {
-        if (players.white === socket.id) {
-            delete players.white;
-        } else if (players.black === socket.id) {
-            delete players.black;
-        }
-        console.log('player disconnected');
-    });
-
-    // Assign roles
+    // Assign color
     if (!players.white) {
         players.white = socket.id;
         socket.emit('playerRole', 'w');
@@ -43,43 +32,55 @@ io.on('connection', (socket) => {
         socket.emit('spectatorRole');
     }
 
-    socket.on('move', (move) => {
-        try {
-            if (gameOver) return; // ✅ No moves allowed after game end
-
-            if (chess.turn() === "w" && players.white !== socket.id) return;
-            if (chess.turn() === "b" && players.black !== socket.id) return;
-
-            const res = chess.move(move);
-
-            if (res) {
-                currentPlayer = chess.turn();
-                io.emit('move', move);
-                io.emit("boardState", chess.fen());
-
-                // ✅ Check for game over conditions
-                if (chess.isCheckmate()) {
-                    const winner = chess.turn() === "w" ? "Black" : "White";
-                    io.emit("gameOver", { type: "checkmate", winner });
-                    gameOver = true;
-                } else if (chess.isStalemate()) {
-                    io.emit("gameOver", { type: "stalemate" });
-                    gameOver = true;
-                } else if (chess.isDraw()) {
-                    io.emit("gameOver", { type: "draw" });
-                    gameOver = true;
-                }
-
-            } else {
-                console.log("Invalid move");
-                socket.emit("invalidMove", move);
-            }
-        } catch (err) {
-            console.log(err);
-            socket.emit("invalidMove", move);
-        }
+    socket.on('disconnect', () => {
+        if (players.white === socket.id) delete players.white;
+        if (players.black === socket.id) delete players.black;
+        console.log('player disconnected', socket.id);
     });
+
+   socket.on('move', (move) => {
+    try {
+        if (chess.turn() === 'w' && players.white !== socket.id) return;
+        if (chess.turn() === 'b' && players.black !== socket.id) return;
+
+        if (move.promotion && !isPromotionMove(move)) {
+            delete move.promotion;
+        }
+
+        const result = chess.move(move);
+        if (result) {
+            io.emit('move', move);
+            io.emit('boardState', chess.fen());
+
+            // Check for game over after this move
+            if (chess.isGameOver()) {
+                if (chess.isCheckmate()) {
+                    let winner = (chess.turn() === 'w') ? 'Black' : 'White';
+                    io.emit('gameOver', { result: `${winner} wins by checkmate` });
+                } else if (chess.isDraw()) {
+                    io.emit('gameOver', { result: 'Draw' });
+                } else if (chess.isStalemate()) {
+                    io.emit('gameOver', { result: 'Draw by stalemate' });
+                }
+            }
+        } else {
+            socket.emit('invalidMove', move);
+        }
+    } catch (err) {
+        console.error(err);
+        socket.emit('invalidMove', move);
+    }
 });
+
+});
+
+// Helper to check if move is a valid promotion
+function isPromotionMove(move) {
+    return (
+        (move.from[1] === '7' && move.to[1] === '8') || // White pawn promoting
+        (move.from[1] === '2' && move.to[1] === '1')    // Black pawn promoting
+    );
+}
 
 server.listen(3000, () => {
     console.log('server is running on port 3000');

@@ -7,6 +7,19 @@ let sourceSquare = null;
 let playerRole = null;
 let gameEnded = false;
 
+
+function sendMove(from, to, piece) {
+    let move = { from, to };
+
+    // Only set promotion if it's a pawn reaching last rank
+    if (piece.toLowerCase() === 'p' && (to.endsWith('8') || to.endsWith('1'))) {
+        move.promotion = 'q';
+    }
+
+    socket.emit('move', move);
+}
+
+
 const renderBoard = () => {
     const board = chess.board();
     boardElement.innerHTML = "";
@@ -23,7 +36,11 @@ const renderBoard = () => {
                 pieceElement.classList.add('piece', square.color === 'w' ? "white" : "black");
                 pieceElement.innerText = getPieceUnicode(square);
 
-                pieceElement.draggable = playerRole === square.color;
+                pieceElement.draggable =
+                    !gameEnded &&
+                    playerRole === square.color &&
+                    chess.turn() === playerRole;
+
                 
                 // ✅ Correct drag event names
                 pieceElement.addEventListener("dragstart", (e) => {
@@ -103,16 +120,9 @@ socket.on("move", (move) => {
     chess.move(move);
     renderBoard();
 });
-socket.on("gameOver", (data) => {
-    gameEnded = true;
-
-    if (data.type === "checkmate") {
-        alert(`Checkmate! ${data.winner} wins!`);
-    } else if (data.type === "stalemate") {
-        alert("Draw by stalemate!");
-    } else if (data.type === "draw") {
-        alert("Game drawn!");
-    }
+socket.on('gameOver', (data) => {
+    alert(data.result);
 });
+
 
 renderBoard();
