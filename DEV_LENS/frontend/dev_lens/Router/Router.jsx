@@ -8,7 +8,7 @@ import Nav from "../src/components/Nav_bar";
 
 const router = createBrowserRouter([
     {
-    path: "/page",
+    path: "/",
     element: 
     <div>
         <Nav></Nav>
