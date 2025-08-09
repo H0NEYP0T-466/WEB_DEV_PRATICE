@@ -5,6 +5,7 @@ const boardElement = document.querySelector('.chessboard');
 let draggedPiece = null;
 let sourceSquare = null;
 let playerRole = null;
+let gameEnded = false;
 
 const renderBoard = () => {
     const board = chess.board();
@@ -101,6 +102,17 @@ socket.on("boardState", (fen) => {
 socket.on("move", (move) => {
     chess.move(move);
     renderBoard();
+});
+socket.on("gameOver", (data) => {
+    gameEnded = true;
+
+    if (data.type === "checkmate") {
+        alert(`Checkmate! ${data.winner} wins!`);
+    } else if (data.type === "stalemate") {
+        alert("Draw by stalemate!");
+    } else if (data.type === "draw") {
+        alert("Game drawn!");
+    }
 });
 
 renderBoard();
