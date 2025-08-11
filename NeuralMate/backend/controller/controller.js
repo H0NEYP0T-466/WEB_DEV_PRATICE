@@ -1,16 +1,21 @@
 const generateGeminiResponse = require("../gemini/ai.model");
 
-const generateRES= async (req, res) => {
+const generateRES = async (req, res) => {
   try {
-     console.log('Received request at /review with body:', req.body);
-    const prompt = req.body.prompt || "Hello?"; 
+    console.log('Received request at /api/gemini with body:', req.body);
+    
+    const prompt = req.body.prompt;
+    if (!prompt) {
+      return res.status(400).json({ error: "Prompt is required." });
+    }
 
     const reply = await generateGeminiResponse(prompt);
 
-    res.send(reply);
+    // Respond with JSON for consistency
+    res.json({ text: reply });
   } catch (err) {
-    console.error("❌ Error in /ai route:", err.message);
-    res.status(500).send("Something went wrong with Gemini.");
+    console.error("❌ Error in /api/gemini route:", err.message);
+    res.status(500).json({ error: "Something went wrong with Gemini." });
   }
 };
 
