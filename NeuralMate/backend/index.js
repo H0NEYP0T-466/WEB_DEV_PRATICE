@@ -3,14 +3,13 @@ const app = express();
 const dotenv = require('dotenv');
 dotenv.config();
 const connectDB=require('./config/DB.js');
+const generateRES = require('./controller/controller.js');
 
 
 app.use(express.json());
 
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+app.post('/',generateRES)
 
 app.listen(process.env.PORT, () => {
     connectDB();
