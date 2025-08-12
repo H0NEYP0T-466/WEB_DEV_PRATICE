@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 
 const App = () => {
-  const [responseText, setResponseText] = useState('');
+  const [messages, setMessages] = useState([]);
+  const recognitionRef = useRef(null);
+  const isRecognizingRef = useRef(false);
+  const bottomRef = useRef(null);
 
   useEffect(() => {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       console.error('Speech Recognition API not supported in this browser.');
       return;
@@ -13,20 +17,45 @@ const App = () => {
 
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
+    recognition.interimResults = false;
     recognition.lang = 'en-US';
+    recognitionRef.current = recognition;
 
+    recognition.onstart = () => {
+      isRecognizingRef.current = true;
+    };
+
+ recognition.onend = () => {
+  isRecognizingRef.current = false;
+  setTimeout(() => {
+    if (!isRecognizingRef.current) {
+      recognition.start();
+    }
+  }, 500); // wait 0.5s before restarting
+};
     recognition.onresult = async (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript.trim();
-      console.log('Heard:', transcript);
+      const transcript =
+        event.results[event.results.length - 1][0].transcript.trim();
 
-      if (transcript.toLowerCase().includes('bella') || transcript.toLowerCase().includes('isabella') || transcript.toLowerCase().includes('bala')) {
+      // User message
+      setMessages((prev) => [...prev, { sender: 'Honeypot', text: transcript }]);
+
+      if (
+        transcript.toLowerCase().includes('bella') ||
+        transcript.toLowerCase().includes('isabella') ||
+        transcript.toLowerCase().includes('bala')
+      ) {
         try {
-          console.log('Trigger word detected! Sending request to backend...');
+          await saveMessageToDB('Honeypot', transcript);
           const response = await generateGeminiResponse(transcript);
-          setResponseText(response);
+          await saveMessageToDB('Isabella', response);
+          setMessages((prev) => [...prev, { sender: 'Isabella', text: response }]);
         } catch (error) {
           console.error('Error calling Gemini API:', error);
-          setResponseText('Error generating response.');
+          setMessages((prev) => [
+            ...prev,
+            { sender: 'Isabella', text: 'Error generating response.' },
+          ]);
         }
       }
     };
@@ -37,27 +66,47 @@ const App = () => {
 
     recognition.start();
 
-
     return () => {
-
+      recognition.stop();
     };
   }, []);
 
+  const generateGeminiResponse = async (prompt) => {
+    const res = await axios.post('http://localhost:8000/api/gemini', { prompt });
+    return res.data.text;
+  };
+   const saveMessageToDB = async (sender, text) => {
+    try {
+      await axios.post('http://localhost:8000/api/save-message', {
+        name: 'Honeypot',
+        assistantname: 'Isabella',
+        sender,
+        text
+      });
+    } catch (err) {
+      console.error('Error saving message to DB:', err);
+    }
+  };
 
-const generateGeminiResponse = async (prompt) => {
-  console.log('Sending prompt to Gemini API:', prompt);
-  const res = await axios.post('http://localhost:8000/api/gemini', { prompt });
-  console.log('Received response from Gemini API:', res.data);
-  return res.data.text;
-};
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   return (
-    <div style={{ padding: '1rem', fontFamily: 'Arial' }}>
-      <h1>Isabella Speech Assistant</h1>
-      <p><strong>Say "Bella" or "Isabella" to trigger a response.</strong></p>
-      <div style={{ marginTop: '1rem', whiteSpace: 'pre-wrap' }}>
-        <strong>Response:</strong> {responseText}
-      </div>
+    <div
+      style={{
+        color: '#fff',
+        fontFamily: 'monospace',
+        height: '100vh',
+        overflowY: 'auto',
+      }}
+    >
+      {messages.map((msg, index) => (
+        <div key={index}>
+          <span style={{ color: '#0f0' ,fontSize: '1rem' }}>{msg.sender}:</span> <span style={{fontSize: '1rem'}}>{msg.text}</span>
+        </div>
+      ))}
+      <div ref={bottomRef} />
     </div>
   );
 };
