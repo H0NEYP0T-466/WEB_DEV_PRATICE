@@ -7,6 +7,26 @@ const App = () => {
   const isRecognizingRef = useRef(false);
   const bottomRef = useRef(null);
 
+  // 🔹 Fetch messages on load
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const res = await axios.get('http://localhost:8000/api/get-messages', {
+          params: { userName: 'Honeypot', assistantName: 'Isabella', limit: 50 }
+        });
+        if (res.data.success) {
+          const sortedMessages = res.data.messages.sort(
+            (a, b) => new Date(a.timestamp) - new Date(b.timestamp)
+          );
+          setMessages(sortedMessages);
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+      }
+    };
+    fetchMessages();
+  }, []);
+
   useEffect(() => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -25,19 +45,19 @@ const App = () => {
       isRecognizingRef.current = true;
     };
 
- recognition.onend = () => {
-  isRecognizingRef.current = false;
-  setTimeout(() => {
-    if (!isRecognizingRef.current) {
-      recognition.start();
-    }
-  }, 500); // wait 0.5s before restarting
-};
+    recognition.onend = () => {
+      isRecognizingRef.current = false;
+      setTimeout(() => {
+        if (!isRecognizingRef.current) {
+          recognition.start();
+        }
+      }, 500);
+    };
+
     recognition.onresult = async (event) => {
       const transcript =
         event.results[event.results.length - 1][0].transcript.trim();
 
-      // User message
       setMessages((prev) => [...prev, { sender: 'Honeypot', text: transcript }]);
 
       if (
@@ -75,11 +95,12 @@ const App = () => {
     const res = await axios.post('http://localhost:8000/api/gemini', { prompt });
     return res.data.text;
   };
-   const saveMessageToDB = async (sender, text) => {
+
+  const saveMessageToDB = async (sender, text) => {
     try {
       await axios.post('http://localhost:8000/api/save-message', {
-        name: 'Honeypot',
-        assistantname: 'Isabella',
+        userName: 'Honeypot',
+        assistantName: 'Isabella',
         sender,
         text
       });
@@ -103,7 +124,8 @@ const App = () => {
     >
       {messages.map((msg, index) => (
         <div key={index}>
-          <span style={{ color: '#0f0' ,fontSize: '1rem' }}>{msg.sender}:</span> <span style={{fontSize: '1rem'}}>{msg.text}</span>
+          <span style={{ color: '#0f0', fontSize: '1rem' }}>{msg.sender}:</span>{' '}
+          <span style={{ fontSize: '1rem' }}>{msg.text}</span>
         </div>
       ))}
       <div ref={bottomRef} />

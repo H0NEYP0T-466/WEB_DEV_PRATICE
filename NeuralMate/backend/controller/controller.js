@@ -1,4 +1,5 @@
 const generateGeminiResponse = require("../gemini/ai.model");
+const { User } = require('../model/user.model.js');
 
 const generateRES = async (req, res) => {
   try {
@@ -21,4 +22,26 @@ const generateRES = async (req, res) => {
 
 
 
-module.exports = generateRES;
+
+const getMessages= async (req, res) => {
+  const { userName, assistantName, limit = 50 } = req.query;
+
+  try {
+    const user = await User.findOne(
+      { name: userName, assistantname: assistantName },
+      { history: { $slice: -limit } } // Only get the last 'limit' messages
+    );
+
+    if (!user) {
+      return res.json({ success: true, messages: [] });
+    }
+
+    res.json({ success: true, messages: user.history });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+
+
+module.exports = {generateRES,getMessages};
