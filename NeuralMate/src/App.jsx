@@ -1,14 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
-
 const App = () => {
   const [messages, setMessages] = useState([]);
   const [textInput, setTextInput] = useState("");
   const recognitionRef = useRef(null);
   const isRecognizingRef = useRef(false);
   const bottomRef = useRef(null);
-
-  // 🔹 Fetch messages on load
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -97,7 +94,7 @@ const App = () => {
       speak(hindiResponse);
 
       await saveMessageToDB('Honeypot', userText);
-      await saveMessageToDB('Isabella', hindiResponse);
+      await saveMessageToDB('Isabella', englishDisplay);
     } catch (error) {
       console.error('Error processing user message:', error);
       setMessages((prev) => [
@@ -150,8 +147,6 @@ const App = () => {
   const speakNow = () => {
     const voices = window.speechSynthesis.getVoices();
     if (!voices.length) return;
-
-    // Prefer female Hindi voice
     const preferredVoice = voices.find(v =>
       v.lang.includes("hi") &&
       (v.name.toLowerCase().includes("female") ||
@@ -188,52 +183,60 @@ const App = () => {
   }, [messages]);
 
   return (
-    <div style={{
-      color: '#fff',
-      fontFamily: 'monospace',
-      height: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: '#000',
-      padding: '10px',
-      fontSize:'17px'
-    }}>
-      <div style={{ flex: 1, overflowY: 'auto' }}>
-        {messages.map((msg, index) => (
-          <div key={index}>
-            <span style={{ color: msg.sender === "Isabella" ? '#0ff' : '#0f0' }}>
-              {msg.sender}:
-            </span>{' '}
-            <span>{msg.text}</span>
-          </div>
-        ))}
-        <div ref={bottomRef} />
-      </div>
+    
+ <div style={{
+  position: 'relative',
+  zIndex: 1,
+  color: '#fff',
+  fontFamily: 'monospace',
+  height: '100vh',
+  backgroundColor: '#111',
+  display: 'flex',
+  flexDirection: 'column',
+  fontSize:'17px',
+  paddingBottom: '20px',
+  boxSizing: 'border-box',
 
-      {/* Text input */}
-      <form onSubmit={handleTextSubmit} style={{ display: 'flex', marginTop: '10px' }}>
-        <input
-          value={textInput}
-          onChange={(e) => setTextInput(e.target.value)}
-          placeholder="Type your message..."
-          style={{
-            flex: 1,
-            padding: '8px',
-            background: '#111',
-            color: '#fff',
-            border: '1px solid #333'
-          }}
-        />
-        <button type="submit" style={{
-          padding: '8px 12px',
-          background: '#0f0',
-          border: 'none',
-          cursor: 'pointer'
-        }}>
-          Send
-        </button>
-      </form>
-    </div>
+}}>
+  <div style={{
+    flex: 1,
+    overflowY: 'auto',   
+    overflowX: 'hidden',
+
+  }}>
+    {messages.map((msg, index) => (
+      <div key={index}>
+        <span style={{ color: '#0f0' }}>
+          {msg.sender}:
+        </span>{' '}
+        <span >{msg.text}</span>
+      </div>
+    ))}
+    <div ref={bottomRef} />
+  </div>
+  <form onSubmit={handleTextSubmit} style={{ display: 'flex', marginTop: '10px' }}>
+    <input
+      value={textInput}
+      onChange={(e) => setTextInput(e.target.value)}
+      placeholder="Type your message..."
+      style={{
+        flex: 1,
+        padding: '8px',
+        background: '#111',
+        color: '#fff',
+        border: '1px solid #333'
+      }}
+    />
+    <button type="submit" style={{
+      padding: '8px 12px',
+      background: '#0f0',
+      border: 'none',
+      cursor: 'pointer'
+    }}>
+      Send
+    </button>
+  </form>
+</div>
   );
 };
 
