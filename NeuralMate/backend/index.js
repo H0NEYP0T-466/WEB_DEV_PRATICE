@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const dotenv = require('dotenv');
 const router = express.Router();
+const axios = require('axios');
 dotenv.config();
 const connectDB=require('./config/DB.js');
 const {generateRES} = require('./controller/controller.js');
@@ -24,6 +25,25 @@ app.post('/api/save-message', async (req, res) => {
     const savedUser = await insertChatMessage(userName, assistantName, sender, text);
     res.json({ success: true, data: savedUser });
   } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post('/api/translate', async (req, res) => {
+  try {
+    const { text } = req.body;
+    if (!text) return res.status(400).json({ success: false, error: 'Text is required' });
+    const response = await axios.get('https://api.mymemory.translated.net/get', {
+      params: {
+        q: text,
+        langpair: 'hi|en'
+      }
+    });
+
+    const translatedText = response.data.responseData.translatedText || text;
+    res.json({ success: true, text: translatedText });
+  } catch (err) {
+    console.error('Translation error:', err.message);
     res.status(500).json({ success: false, error: err.message });
   }
 });
