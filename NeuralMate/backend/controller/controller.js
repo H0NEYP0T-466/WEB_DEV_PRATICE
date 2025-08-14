@@ -24,12 +24,12 @@ const generateRES = async (req, res) => {
 
 
 const getMessages= async (req, res) => {
-  const { userName, assistantName, limit = 50 } = req.query;
+  const { userName, assistantName, limit = 150 } = req.query;
 
   try {
     const user = await User.findOne(
       { name: userName, assistantname: assistantName },
-      { history: { $slice: -limit } } // Only get the last 'limit' messages
+      { history: { $slice: -limit } } 
     );
 
     if (!user) {

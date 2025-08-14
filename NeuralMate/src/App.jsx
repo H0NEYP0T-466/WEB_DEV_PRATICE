@@ -26,7 +26,7 @@ const App = () => {
 
   useEffect(() => {
     axios.get('http://localhost:8000/api/get-messages', {
-      params: { userName: 'Honeypot', assistantName: 'Isabella', limit: 50 }
+      params: { userName: 'Honeypot', assistantName: 'Isabella', limit: 150 }
     }).then(res => {
       if (res.data.success) {
         const sorted = res.data.messages.sort(
