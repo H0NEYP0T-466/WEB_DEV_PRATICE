@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 
 const App = () => {
@@ -95,31 +96,47 @@ const App = () => {
     return () => recognition.stop();
   }, []);
 
-  // Speak function
-  const speak = (text) => {
-    if (!("speechSynthesis" in window) || voices.length === 0) return;
+ const speak = (text) => {
+  if (!("speechSynthesis" in window) || voices.length === 0) return;
 
-    const utterance = new SpeechSynthesisUtterance(text);
+
+  const cleanedText = text.replace(/[*#_~`]/g, '').trim();
+
+  const chunks = cleanedText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleanedText];
+  
+  const selectedVoice = voices.find(v =>
+    v.lang.includes("en") &&
+    (v.name.toLowerCase().includes("female") ||
+     v.name.toLowerCase().includes("woman") ||
+     v.name.toLowerCase().includes("girl") ||
+     v.name.toLowerCase().includes("google"))
+  ) || voices.find(v => v.lang.includes("en")) || voices[0];
+
+  let index = 0;
+
+  const speakNextChunk = () => {
+    if (index >= chunks.length) return;
+
+    const utterance = new SpeechSynthesisUtterance(chunks[index].trim());
     utterance.lang = "en-US";
     utterance.rate = 1;
     utterance.pitch = 1;
+    utterance.voice = selectedVoice;
 
-    const preferredVoice = voices.find(v =>
-      v.lang.includes("en") &&
-      (v.name.toLowerCase().includes("female") ||
-       v.name.toLowerCase().includes("woman") ||
-       v.name.toLowerCase().includes("girl") ||
-       v.name.toLowerCase().includes("google"))
-    );
+    utterance.onend = () => {
+      index++;
+      speakNextChunk();
+    };
 
-    utterance.voice = preferredVoice || voices.find(v => v.lang.includes("en")) || voices[0];
-    console.log(`🎤 Using voice: ${utterance.voice?.name || "Default"}`);
-
-    window.speechSynthesis.cancel();
     window.speechSynthesis.speak(utterance);
   };
 
-  // Process a user message
+  window.speechSynthesis.cancel();
+  speakNextChunk();
+};
+
+
+
   const processUserMessage = async (userText) => {
     try {
       const englishResponse = await generateGeminiResponse(userText);
@@ -189,7 +206,7 @@ const App = () => {
       backgroundColor: '#111',
       display: 'flex',
       flexDirection: 'column',
-      fontSize: '17px',
+      fontSize: '16px',
       paddingBottom: '20px',
       boxSizing: 'border-box',
     }}>
@@ -198,14 +215,59 @@ const App = () => {
         overflowY: 'auto',
         overflowX: 'hidden',
       }}>
-        {messages.map((msg, index) => (
-          <div key={index}>
-            <span style={{ color: '#0f0' }}>
-              {msg.sender}:
-            </span>{' '}
-            <span>{msg.text}</span>
-          </div>
-        ))}
+      {messages.map((msg, index) => (
+  <div key={index} style={{ marginBottom: '8px' }}>
+    <span style={{ color: '#0f0' }}>
+      {msg.sender}:
+    </span>{' '}
+    <ReactMarkdown
+      children={msg.text}
+      components={{
+        h1: ({ node, ...props }) => (
+          <h1 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        h2: ({ node, ...props }) => (
+          <h2 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        h3: ({ node, ...props }) => (
+          <h3 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        h4: ({ node, ...props }) => (
+          <h4 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        h5: ({ node, ...props }) => (
+          <h5 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        h6: ({ node, ...props }) => (
+          <h6 style={{ color: '#ff4040', display: 'inline' }} {...props} />
+        ),
+        p: ({ node, ...props }) => (
+          <p style={{ display: 'inline', color: '#fff' }} {...props} />
+        ),
+        strong: ({ node, ...props }) => (
+          <strong style={{ color: '#ff4040', fontWeight: 'bold' }} {...props} />
+        ),
+        em: ({ node, ...props }) => (
+          <em style={{ color: '#ccc', fontStyle: 'italic' }} {...props} />
+        ),
+        code: ({ node, ...props }) => (
+          <code
+            style={{
+              background: '#222',
+              color: '#fff',
+              padding: '2px 4px',
+              borderRadius: '4px',
+              fontFamily: 'monospace'
+            }}
+            {...props}
+          />
+        )
+      }}
+    />
+  </div>
+))}
+
+
         <div ref={bottomRef} />
       </div>
       <form onSubmit={handleTextSubmit} style={{ display: 'flex', marginTop: '10px' }}>
