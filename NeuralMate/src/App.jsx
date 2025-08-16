@@ -10,6 +10,35 @@ const App = () => {
   const isRecognizingRef = useRef(false);
   const bottomRef = useRef(null);
 
+
+
+const saveLastMessageTime = () => {
+  const now = new Date().toISOString();
+  localStorage.setItem("lastMessageTime", now);
+};
+
+const getTimeSinceLastMessage = () => {
+  const lastTime = localStorage.getItem("lastMessageTime");
+  if (!lastTime) return null;
+
+  const lastDate = new Date(lastTime);
+  const now = new Date();
+  const diffMs = now - lastDate;
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+  if (diffDays >= 1) {
+    return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
+  } else if (diffHours >= 1) {
+    return `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
+  } else if (diffMinutes >= 1) {
+    return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""}`;
+  } else {
+    return "just a moment";
+  }
+};
+
   const loadVoices = (onLoaded) => {
     let allVoices = window.speechSynthesis.getVoices();
     if (allVoices.length > 0) {
@@ -65,6 +94,7 @@ const App = () => {
       setMessages(prev => [...prev, { sender: 'Honeypot', text: transcript }]);
 
       if (/bella|isabella|bala/i.test(transcript)) {
+         saveLastMessageTime();
         loadVoices(() => processUserMessage(transcript));
       }
     };
@@ -116,17 +146,26 @@ const App = () => {
   };
 
   const processUserMessage = async (userText) => {
-    try {
-      const englishResponse = await generateGeminiResponse(userText);
-      setMessages(prev => [...prev, { sender: 'Isabella', text: englishResponse }]);
-      speak(englishResponse);
-      await saveMessageToDB('Honeypot', userText);
-      await saveMessageToDB('Isabella', englishResponse);
-    } catch (error) {
-      console.error('Error processing user message:', error);
-      setMessages(prev => [...prev, { sender: 'Isabella', text: 'Error generating response.' }]);
+  try {
+    const elapsed = getTimeSinceLastMessage(); 
+    let contextPrompt = userText;
+
+    if (elapsed) {
+      contextPrompt = `Sir last messaged me ${elapsed} ago. Here is his new message: ${userText}`;
     }
-  };
+
+    const englishResponse = await generateGeminiResponse(contextPrompt);
+    setMessages(prev => [...prev, { sender: 'Isabella', text: englishResponse }]);
+    speak(englishResponse);
+
+    await saveMessageToDB('Honeypot', userText);
+    await saveMessageToDB('Isabella', englishResponse);
+  } catch (error) {
+    console.error('Error processing user message:', error);
+    setMessages(prev => [...prev, { sender: 'Isabella', text: 'Error generating response.' }]);
+  }
+};
+
 
   const generateGeminiResponse = async (prompt) => {
     const res = await axios.post('http://localhost:8000/api/gemini', { prompt });
@@ -152,6 +191,7 @@ const App = () => {
     const userMessage = textInput.trim();
     setTextInput("");
     setMessages(prev => [...prev, { sender: 'Honeypot', text: userMessage }]);
+    saveLastMessageTime();
     await processUserMessage(userMessage);
   };
 
