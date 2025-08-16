@@ -42,32 +42,6 @@ const getMessages= async (req, res) => {
   }
 };
 
-const saveLastMessageTime = () => {
-
-  const now = new Date().toISOString();
-  localStorage.setItem("lastMessageTime", now);
-};
-
-const getTimeSinceLastMessage = () => {
-  const lastTime = localStorage.getItem("lastMessageTime");
-  if (!lastTime) return null;
-
-  const lastDate = new Date(lastTime);
-  const now = new Date();
-  const diffMs = now - lastDate;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-
-  if (diffDays >= 1) {
-    return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
-  } else if (diffHours >= 1) {
-    return `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
-  } else {
-    return "just a little while";
-  }
-};
 
 
-
-
-module.exports = {generateRES,getMessages,saveLastMessageTime,getTimeSinceLastMessage};
+module.exports = {generateRES,getMessages};

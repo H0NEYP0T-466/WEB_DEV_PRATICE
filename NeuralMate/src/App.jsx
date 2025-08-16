@@ -10,34 +10,20 @@ const App = () => {
   const isRecognizingRef = useRef(false);
   const bottomRef = useRef(null);
 
-
-
-const saveLastMessageTime = () => {
-  const now = new Date().toISOString();
-  localStorage.setItem("lastMessageTime", now);
-};
-
-const getTimeSinceLastMessage = () => {
-  const lastTime = localStorage.getItem("lastMessageTime");
-  if (!lastTime) return null;
-
-  const lastDate = new Date(lastTime);
+const saveCurrentMessageTime = () => {
   const now = new Date();
-  const diffMs = now - lastDate;
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-  const diffMinutes = Math.floor(diffMs / (1000 * 60));
-
-  if (diffDays >= 1) {
-    return `${diffDays} day${diffDays > 1 ? "s" : ""}`;
-  } else if (diffHours >= 1) {
-    return `${diffHours} hour${diffHours > 1 ? "s" : ""}`;
-  } else if (diffMinutes >= 1) {
-    return `${diffMinutes} minute${diffMinutes > 1 ? "s" : ""}`;
-  } else {
-    return "just a moment";
-  }
+  const options = { timeZone: "Asia/Karachi", hour12: true }; 
+  const pakTime = now.toLocaleString("en-PK", options);
+  localStorage.setItem("lastMessageTime", pakTime);
+  console.log("Last message saved at:", pakTime);
+  return pakTime;
 };
+
+const getLastMessageTime = () => {
+  return localStorage.getItem("lastMessageTime") || "No previous message";
+};
+
+
 
   const loadVoices = (onLoaded) => {
     let allVoices = window.speechSynthesis.getVoices();
@@ -94,7 +80,6 @@ const getTimeSinceLastMessage = () => {
       setMessages(prev => [...prev, { sender: 'Honeypot', text: transcript }]);
 
       if (/bella|isabella|bala/i.test(transcript)) {
-         saveLastMessageTime();
         loadVoices(() => processUserMessage(transcript));
       }
     };
@@ -145,14 +130,14 @@ const getTimeSinceLastMessage = () => {
     speakNextChunk();
   };
 
-  const processUserMessage = async (userText) => {
+const processUserMessage = async (userText) => {
   try {
-    const elapsed = getTimeSinceLastMessage(); 
-    let contextPrompt = userText;
+    const lastMessageTime = getLastMessageTime(); // previous message
+    const now = new Date();
+    const options = { timeZone: "Asia/Karachi", hour12: true }; // AM/PM
+    const currentMessageTime = now.toLocaleString("en-PK", options);
 
-    if (elapsed) {
-      contextPrompt = `Sir last messaged me ${elapsed} ago. Here is his new message: ${userText}`;
-    }
+    let contextPrompt = `Sir, your last message was sent at ${lastMessageTime}. The current message time is ${currentMessageTime}. Here is the new message: ${userText}`;
 
     const englishResponse = await generateGeminiResponse(contextPrompt);
     setMessages(prev => [...prev, { sender: 'Isabella', text: englishResponse }]);
@@ -160,6 +145,10 @@ const getTimeSinceLastMessage = () => {
 
     await saveMessageToDB('Honeypot', userText);
     await saveMessageToDB('Isabella', englishResponse);
+
+    // Save current message time AFTER processing
+    localStorage.setItem("lastMessageTime", currentMessageTime);
+
   } catch (error) {
     console.error('Error processing user message:', error);
     setMessages(prev => [...prev, { sender: 'Isabella', text: 'Error generating response.' }]);
@@ -191,7 +180,6 @@ const getTimeSinceLastMessage = () => {
     const userMessage = textInput.trim();
     setTextInput("");
     setMessages(prev => [...prev, { sender: 'Honeypot', text: userMessage }]);
-    saveLastMessageTime();
     await processUserMessage(userMessage);
   };
 
