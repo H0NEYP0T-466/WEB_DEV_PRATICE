@@ -85,7 +85,11 @@ const App = () => {
       return;
     }
 
-    const cleanedText = text.replace(/[*#_~`]/g, '').trim();
+    const cleanedText = text
+  .replace(/[*#_~`]/g, '')
+  .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, '')
+  .trim();
+
     const chunks = cleanedText.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleanedText];
     const selectedVoice = availableVoices.find(v =>
       v.lang.includes("en") &&
@@ -100,7 +104,7 @@ const App = () => {
       if (index >= chunks.length) return;
       const utterance = new SpeechSynthesisUtterance(chunks[index].trim());
       utterance.lang = "en-US";
-      utterance.rate = 1;
+      utterance.rate = 1.1;
       utterance.pitch = 1;
       utterance.voice = selectedVoice;
       utterance.onend = () => { index++; speakNextChunk(); };
