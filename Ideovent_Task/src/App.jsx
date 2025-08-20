@@ -1,82 +1,96 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const App = () => {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [showLanding, setShowLanding] = useState(true);
 
   useEffect(() => {
-    const fetchMovies = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const res = await fetch("https://ghibliapi.vercel.app/films");
-        if (!res.ok) throw new Error("Failed to fetch movies");
-        const data = await res.json();
-
-        setMovies(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMovies();
+    const timer = setTimeout(() => setShowLanding(false), 2500);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-8">
-      <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-10 drop-shadow">
-        🎬 Studio Ghibli Movies
-      </h1>
-
-      {loading && (
-        <p className="text-center text-lg font-medium animate-pulse">
-          Loading movies...
-        </p>
-      )}
-      {error && (
-        <p className="text-center text-red-600 font-semibold">{error}</p>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {!loading &&
-          !error &&
-          movies.map((movie) => (
-            <div
-              key={movie.id}
-              className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-2 overflow-hidden flex flex-col"
+    <div className="min-h-screen bg-slate-50 text-slate-800">
+      {/* Landing Page */}
+      <AnimatePresence>
+        {showLanding && (
+          <motion.div
+            key="landing"
+            className="fixed inset-0 flex items-center justify-center bg-indigo-600 text-white z-50"
+          >
+            <motion.h1
+              layoutId="logo"
+              className="text-6xl font-extrabold tracking-wide"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
             >
-              {movie.image ? (
-                <img
-                  src={movie.image}
-                  alt={movie.title}
-                  className="h-64 w-full object-cover"
-                />
-              ) : (
-                <div className="bg-gray-300 h-64 flex items-center justify-center text-gray-600">
-                  No Image
-                </div>
-              )}
+              MovieApp
+            </motion.h1>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-              <div className="p-4 flex flex-col flex-grow">
-                <h2 className="font-bold text-xl text-gray-800 mb-2">
-                  {movie.title}
-                </h2>
-                <p className="text-sm text-gray-600 flex-grow line-clamp-4">
-                  {movie.description}
-                </p>
-                <p className="mt-3 text-xs text-gray-500">
-                  🎬 Directed by:{" "}
-                  <span className="font-medium">{movie.director}</span> | 📅{" "}
-                  {movie.release_date}
+      {/* Navbar */}
+      <header className="p-4 bg-white/80 backdrop-blur-md shadow fixed top-0 left-0 right-0 z-40 flex items-center">
+        <motion.h1
+          layoutId="logo"
+          className="text-xl font-bold text-indigo-600"
+          transition={{ duration: 0.8, ease: "easeInOut" }}
+        >
+          MovieApp
+        </motion.h1>
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-24 px-6 max-w-5xl mx-auto">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+          className="text-3xl font-semibold mb-6 text-slate-700"
+        >
+          Top Movies
+        </motion.h2>
+
+        {/* Example Movie Grid */}
+        <motion.div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.1, delayChildren: 0.5 },
+            },
+          }}
+        >
+          {[...Array(8)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="bg-white shadow rounded-2xl overflow-hidden hover:shadow-lg transition cursor-pointer"
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                visible: { opacity: 1, y: 0 },
+              }}
+            >
+              <div className="aspect-[2/3] bg-slate-200 flex items-center justify-center text-slate-500">
+                Poster
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-indigo-600">
+                  Movie Title {i + 1}
+                </h3>
+                <p className="text-sm text-slate-500 mt-2">
+                  This is a short description of the movie.
                 </p>
               </div>
-            </div>
+            </motion.div>
           ))}
-      </div>
+        </motion.div>
+      </main>
     </div>
   );
 };
