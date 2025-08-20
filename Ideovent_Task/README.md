@@ -9,10 +9,10 @@ A simple, elegant React app that fetches Studio Ghibli movies from the
 ## 🚀 Features
 
 -   ✅ Fetches movies from the [Studio Ghibli
-    API](https://ghibliapi.vercel.app/films)\
--   🔍 Search movies by title\
--   📑 Pagination (8 movies per page)\
--   🎨 Clean UI with **TailwindCSS**\
+    API](https://ghibliapi.vercel.app/films)
+-   🔍 Search movies by title
+-   📑 Pagination (8 movies per page)
+-   🎨 Clean UI with **TailwindCSS**
 -   ⚡ Fast and responsive design
 
 ------------------------------------------------------------------------
@@ -21,15 +21,14 @@ A simple, elegant React app that fetches Studio Ghibli movies from the
 
 Landing page + Movies grid with search & pagination.
 
-*(You can add a screenshot here after deployment!)*
 
 ------------------------------------------------------------------------
 
 ## 🛠️ Tech Stack
 
--   **React** (functional components + hooks)\
--   **TailwindCSS** (for styling)\
--   **Vercel** (for deployment)\
+-   **React** (functional components + hooks)
+-   **TailwindCSS** (for styling)
+-   **Vercel** (for deployment)
 -   **GhibliAPI** (movie data source)
 
 ------------------------------------------------------------------------
@@ -39,8 +38,8 @@ Landing page + Movies grid with search & pagination.
 1.  Clone this repo:
 
     ``` bash
-    git clone https://github.com/your-username/ghibliverse.git
-    cd ghibliverse
+    git clone https://github.com/H0NEYP0T-466/GhibliVerse.git
+    cd GhibliVerse
     ```
 
 2.  Install dependencies:
@@ -59,9 +58,8 @@ Landing page + Movies grid with search & pagination.
 
 ## 🌐 Deployment
 
-This project can be easily deployed on **Vercel**.\
-Just push to GitHub and import the repo on
-[vercel.com](https://vercel.com/).
+
+[Live Link](https://ghibi-verse.vercel.app/).
 
 ------------------------------------------------------------------------
 
