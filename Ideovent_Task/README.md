@@ -1,12 +1,77 @@
-# React + Vite
+# 🎬 GhibliVerse
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple, elegant React app that fetches Studio Ghibli movies from the
+[GhibliAPI](https://ghibliapi.vercel.app/) and displays them with
+**search** and **pagination** features.
 
-Currently, two official plugins are available:
+------------------------------------------------------------------------
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+-   ✅ Fetches movies from the [Studio Ghibli
+    API](https://ghibliapi.vercel.app/films)\
+-   🔍 Search movies by title\
+-   📑 Pagination (8 movies per page)\
+-   🎨 Clean UI with **TailwindCSS**\
+-   ⚡ Fast and responsive design
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+------------------------------------------------------------------------
+
+## 🖼️ Preview
+
+Landing page + Movies grid with search & pagination.
+
+*(You can add a screenshot here after deployment!)*
+
+------------------------------------------------------------------------
+
+## 🛠️ Tech Stack
+
+-   **React** (functional components + hooks)\
+-   **TailwindCSS** (for styling)\
+-   **Vercel** (for deployment)\
+-   **GhibliAPI** (movie data source)
+
+------------------------------------------------------------------------
+
+## 📦 Installation
+
+1.  Clone this repo:
+
+    ``` bash
+    git clone https://github.com/your-username/ghibliverse.git
+    cd ghibliverse
+    ```
+
+2.  Install dependencies:
+
+    ``` bash
+    npm install
+    ```
+
+3.  Run the dev server:
+
+    ``` bash
+    npm run dev
+    ```
+
+------------------------------------------------------------------------
+
+## 🌐 Deployment
+
+This project can be easily deployed on **Vercel**.\
+Just push to GitHub and import the repo on
+[vercel.com](https://vercel.com/).
+
+------------------------------------------------------------------------
+
+## ✨ Inspiration
+
+Studio Ghibli movies are magical and timeless 🌸.\
+This project celebrates them with a minimal and elegant UI.
+
+------------------------------------------------------------------------
+
+## 📜 License
+
+MIT License © 2025
