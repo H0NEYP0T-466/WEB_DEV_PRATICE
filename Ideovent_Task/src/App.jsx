@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const BRAND = "GhibliVerse"; // keep title consistent everywhere
+const BRAND = "GhibliVerse"; // consistent brand
 const MOVIES_PER_PAGE = 8;
 
 function truncate(text, n = 120) {
@@ -37,8 +37,8 @@ export default function App() {
     };
     fetchMovies();
 
-    // landing timing (feel free to tweak)
-    const t = setTimeout(() => setShowLanding(false), 2200);
+    // landing timing
+    const t = setTimeout(() => setShowLanding(false), 2500);
     return () => clearTimeout(t);
   }, []);
 
@@ -63,22 +63,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800">
-      {/* --- Landing overlay with shared logo --- */}
+      {/* --- Landing overlay with smooth morph animation --- */}
       <AnimatePresence>
         {showLanding && (
           <motion.div
             key="landing"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-indigo-600 text-white"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            className="fixed inset-0 flex items-center justify-center bg-indigo-600 text-white z-50"
           >
             <motion.h1
               layoutId="brand"
-              className="text-6xl md:text-7xl font-extrabold tracking-wide drop-shadow"
-              initial={{ scale: 1, opacity: 1 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ duration: 0.6, ease: "easeInOut" }}
+              className="text-6xl md:text-7xl font-extrabold tracking-wide"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
             >
               {BRAND}
             </motion.h1>
@@ -92,12 +90,11 @@ export default function App() {
           <motion.h1
             layoutId="brand"
             className="text-xl md:text-2xl font-bold text-indigo-600"
-            transition={{ duration: 0.7, ease: "easeInOut" }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
           >
             {BRAND}
           </motion.h1>
 
-          {/* simple brand-right chip */}
           <div className="hidden md:block text-sm text-slate-500">
             Discover the magic ✨
           </div>
@@ -210,7 +207,6 @@ export default function App() {
                   Prev
                 </button>
 
-                {/* numeric buttons (compact for small screens) */}
                 <div className="hidden sm:flex gap-1">
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map(
                     (p) => (
@@ -237,7 +233,6 @@ export default function App() {
                   Next
                 </button>
 
-                {/* page indicator for mobile */}
                 <div className="sm:hidden text-sm text-slate-600 ml-2">
                   Page {page} / {totalPages}
                 </div>
