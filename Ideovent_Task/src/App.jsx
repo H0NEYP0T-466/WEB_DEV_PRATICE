@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from "react";
 
 const App = () => {
-  const [pokemons, setPokemons] = useState([]);
+  const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-
-  const limit = 10; 
-  const offset = (page - 1) * limit;
 
   useEffect(() => {
-    const fetchPokemons = async () => {
+    const fetchMovies = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        const res = await fetch(
-          `https://pokeapi.co/api/v2/pokemon?limit=${limit}&offset=${offset}`
-        );
-        if (!res.ok) throw new Error("Failed to fetch data");
+        const res = await fetch("https://ghibliapi.vercel.app/films");
+        if (!res.ok) throw new Error("Failed to fetch movies");
         const data = await res.json();
 
-        setPokemons(data.results);
+        setMovies(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -29,53 +23,59 @@ const App = () => {
       }
     };
 
-    fetchPokemons();
-  }, [page]);
+    fetchMovies();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-center mb-6">Pokémon List</h1>
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-100 p-8">
+      <h1 className="text-4xl font-extrabold text-center text-purple-800 mb-10 drop-shadow">
+        🎬 Studio Ghibli Movies
+      </h1>
 
-      {loading && <p className="text-center">Loading...</p>}
-      {error && <p className="text-center text-red-500">{error}</p>}
+      {loading && (
+        <p className="text-center text-lg font-medium animate-pulse">
+          Loading movies...
+        </p>
+      )}
+      {error && (
+        <p className="text-center text-red-600 font-semibold">{error}</p>
+      )}
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
         {!loading &&
           !error &&
-          pokemons.map((pokemon, index) => (
+          movies.map((movie) => (
             <div
-              key={index}
-              className="bg-white rounded-2xl shadow p-4 flex flex-col items-center"
+              key={movie.id}
+              className="bg-white rounded-2xl shadow-md hover:shadow-2xl transition-transform transform hover:-translate-y-2 overflow-hidden flex flex-col"
             >
-              <p className="capitalize font-semibold">{pokemon.name}</p>
-              <a
-                href={pokemon.url}
-                target="_blank"
-                rel="noreferrer"
-                className="text-blue-500 text-sm mt-2"
-              >
-                View Details
-              </a>
+              {movie.image ? (
+                <img
+                  src={movie.image}
+                  alt={movie.title}
+                  className="h-64 w-full object-cover"
+                />
+              ) : (
+                <div className="bg-gray-300 h-64 flex items-center justify-center text-gray-600">
+                  No Image
+                </div>
+              )}
+
+              <div className="p-4 flex flex-col flex-grow">
+                <h2 className="font-bold text-xl text-gray-800 mb-2">
+                  {movie.title}
+                </h2>
+                <p className="text-sm text-gray-600 flex-grow line-clamp-4">
+                  {movie.description}
+                </p>
+                <p className="mt-3 text-xs text-gray-500">
+                  🎬 Directed by:{" "}
+                  <span className="font-medium">{movie.director}</span> | 📅{" "}
+                  {movie.release_date}
+                </p>
+              </div>
             </div>
           ))}
-      </div>
-
-      {/* Pagination Controls */}
-      <div className="flex justify-center mt-6 gap-4">
-        <button
-          onClick={() => setPage((p) => Math.max(p - 1, 1))}
-          disabled={page === 1}
-          className="px-4 py-2 bg-blue-500 text-white rounded-xl disabled:opacity-50"
-        >
-          Prev
-        </button>
-        <span className="font-semibold">Page {page}</span>
-        <button
-          onClick={() => setPage((p) => p + 1)}
-          className="px-4 py-2 bg-blue-500 text-white rounded-xl"
-        >
-          Next
-        </button>
       </div>
     </div>
   );
