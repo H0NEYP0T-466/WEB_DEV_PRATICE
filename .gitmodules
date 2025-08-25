@@ -1,0 +1,21 @@
+[submodule "CHESS"]
+	path = CHESS
+	url = https://github.com/H0NEYP0T-466/CHESS.git
+[submodule "DEV_LENS"]
+	path = DEV_LENS
+	url = https://github.com/H0NEYP0T-466/DEV_LENS.git
+[submodule "FRONTEND_PROJECT"]
+	path = FRONTEND_PROJECT
+	url = https://github.com/H0NEYP0T-466/FRONTEND_PROJECT.git
+[submodule "Ideovent_Task"]
+	path = Ideovent_Task
+	url = https://github.com/H0NEYP0T-466/Ideovent_Task.git
+[submodule "NeuralMate"]
+	path = NeuralMate
+	url = https://github.com/H0NEYP0T-466/NeuralMate.git
+[submodule "PASTE_APP"]
+	path = PASTE_APP
+	url = https://github.com/H0NEYP0T-466/PASTE_APP.git
+[submodule "fullStackProject"]
+	path = fullStackProject
+	url = https://github.com/H0NEYP0T-466/fullStackProject.git
