@@ -1,15 +1,15 @@
 [submodule "CHESS"]
 	path = CHESS
-	url = https://github.com/H0NEYP0T-466/CHESS.git
+	url = https://github.com/H0NEYP0T-466/ChessVision.git
 [submodule "DEV_LENS"]
 	path = DEV_LENS
-	url = https://github.com/H0NEYP0T-466/DEV_LENS.git
+	url = https://github.com/H0NEYP0T-466/DEV-LENS.git
 [submodule "FRONTEND_PROJECT"]
 	path = FRONTEND_PROJECT
-	url = https://github.com/H0NEYP0T-466/FRONTEND_PROJECT.git
+	url = https://github.com/H0NEYP0T-466/Animotion.git
 [submodule "Ideovent_Task"]
 	path = Ideovent_Task
-	url = https://github.com/H0NEYP0T-466/Ideovent_Task.git
+	url = https://github.com/H0NEYP0T-466/GhibiVerse.git
 [submodule "NeuralMate"]
 	path = NeuralMate
 	url = https://github.com/H0NEYP0T-466/NeuralMate.git
