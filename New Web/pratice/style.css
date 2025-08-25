@@ -1,0 +1,273 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing:border-box;
+    
+}
+html,body
+{
+    height: 100%;
+    width: 100%;
+    
+}
+.navv
+{
+    height: 45px;
+    width: 100%;
+    background-color: #111;
+    display: flex;
+    padding: 10px 20px;
+    gap: 45px;
+    align-items:center;
+
+}
+.navv a{
+    text-decoration: none;
+    color: white;
+}
+
+.navv #search i
+{
+    height: 100%;
+    width: 740px;
+    color: white;
+    display: flex;
+    align-items: flex-end;
+    justify-content: end; 
+    font-size: 20px;
+}
+.mainn #image
+{
+    height:589px;
+    width:100%;
+    background-image: url(https://www.w3schools.com/w3images/la.jpg);
+
+}
+.mainn #band
+{
+    height: 589px;
+    width:900px;
+    margin-left: 150px;
+    padding-top: 60px;
+    text-align: center;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+.mainn #band h2
+{
+    padding-top: 20px;
+    color: grey;
+    padding-bottom: 15px;
+}
+.mainn #band .img
+{
+    height: 230px;
+    width: 250px;
+    padding: 10px 30px;
+    border-radius: 35px;
+}
+.mainn #band #name 
+{
+    display: flex;
+    align-items: center;
+    gap :200px;
+    padding-top: 50px;
+    padding-left: 180px;
+
+}
+
+.mainn #tour
+{
+    height: 900px;
+    width:100%;
+    margin-top: 50px;
+    padding-top: 60px;
+    text-align: center;
+    background-color: black;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+}
+ .mainn #tour h1
+ {
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: white;
+
+ }
+  .mainn #tour h3
+ {
+        padding-top: 30px;
+      font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color:grey;
+ }
+ .mainn #tour #ribbon1
+ {
+    width: 730px;
+    height: 40px;
+    background-color: white;
+    margin-top: 50px;
+    margin-left: 300px;
+    border: 1px solid black;
+    text-align: start;
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+ }
+ .mainn #tour #ribbon2
+ {
+    width: 730px;
+    height: 40px;
+    background-color: white;
+    margin-left: 300px;
+     border: 1px solid black;
+     text-align: start;
+    padding: 5px 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+
+
+ }
+  .mainn #tour #ribbon3
+ {
+        padding: 5px 10px;
+    width: 730px;
+    height: 40px;
+    background-color: white;
+    text-align: start;
+    margin-left: 300px;
+     border: 1px solid black;
+     display: flex;
+     flex-direction: row;
+     gap: 600px;
+ }
+
+ .mainn #tour #ribbon1 p
+{
+    border-radius: 3px;
+    text-align: center;
+    background-color: red;
+    width: 80px;
+}
+
+ .mainn #tour #ribbon2 p
+{
+       border-radius: 3px;
+    text-align: center;
+    width: 80px;
+    background-color: red;
+}
+
+ .mainn #tour #ribbon3 p
+{
+    color: white;
+    border-radius: 35px;
+    text-align: center;
+    height: 25px;
+    width: 30px;
+    background-color:black
+}
+.mainn #tour #imagediv
+{
+    height: 420px;
+    width: 230px;
+    background-color: white;
+    margin-top: 50px;
+     margin-left: 70px;
+     background-image: url(https://www.w3schools.com/w3images/newyork.jpg);
+    background-size: 230px 200px;
+    background-repeat: no-repeat;
+}
+.mainn #tour #imagediv1
+{
+    height: 420px;
+    width: 230px;
+    margin-top: 50px;
+    background-color: white;
+    margin-left: 20px;
+    background-image: url(https://www.w3schools.com/w3images/paris.jpg);
+    background-size: 230px 200px;
+    background-repeat: no-repeat;
+}
+.mainn #tour #imagediv2
+{
+    height: 420px;
+    width: 230px;
+    margin-top: 50px;
+    background-color: white;
+     margin-left: 20px;
+     background-image: url(https://www.w3schools.com/w3images/sanfran.jpg);
+    background-size: 230px 200px;
+    background-repeat: no-repeat;
+}
+.para
+{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    padding-top: 210px;
+    font-weight: bold;
+    padding-left: 10px;
+    
+}
+.mainn #tour #wrap
+{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+.data
+{
+    text-align: start;
+    padding:10px 10px;
+    color: gray;
+    
+}
+.button
+{
+    background-color: black;
+    color: white;
+    height: 35px;
+    width: 100px;
+    display: flex;
+    justify-content: start;
+    padding-top: 10px;
+    padding-left: 5px;
+    margin-left: 10px;
+    margin-top: 5px;
+    border: none;
+    
+}
+#contact
+{
+    width: 100%;
+    height: 600px;
+    background-color: white;
+    text-align: center;
+    padding-top: 50px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+
+}
+#contact #c
+{
+    margin-top: 20px;
+    color: gray;
+}
+#contact #info
+{   
+    margin-left: 200px;
+    margin-top: 30px;
+    height: 400px;
+    width: 900px;
+    padding-top: 50px;
+
+}
+#contact .x
+{
+    font-weight: bold;
+    padding-top: 10px;
+    padding-left: 10px;
+    text-align: start;
+}
