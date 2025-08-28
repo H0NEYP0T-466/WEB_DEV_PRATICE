@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1 class="institution-name">Your Institution Name</h1>
+        <nav>
+            <a href="index.html" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+
+        <section class="profile-section">
+            <div class="profile-image">
+                <img src="placeholder-profile.png" alt="Profile Picture"> <!-- Replace with actual image URL -->
+            </div>
+            <div class="profile-details">
+                <h2>Welcome, <span id="teacher-name">Teacher Name</span>!</h2>
+                <p><i class="fas fa-envelope"></i> Email: <span id="teacher-email">teacher@example.com</span></p>
+                <p><i class="fas fa-id-badge"></i> Teacher ID: <span id="teacher-id">987654321</span></p>
+                <p><i class="fas fa-book"></i> Subject: <span id="teacher-subject">Computer Science</span></p>
+            </div>
+        </section>
+
+        <section class="courses-section">
+            <h2><i class="fas fa-chalkboard"></i> Assigned Courses</h2>
+            <ul class="course-list">
+                <li class="course-item">
+                    <span class="course-code">CS101</span> - Introduction to Computer Science
+                </li>
+                <li class="course-item">
+                    <span class="course-code">CS201</span> - Data Structures
+                </li>
+            </ul>
+        </section>
+
+        <section class="notifications-section">
+            <h2><i class="fas fa-bell"></i> Notifications</h2>
+            <ul class="notification-list">
+                <li class="notification-item">
+                    Meeting with department head scheduled for tomorrow.
+                </li>
+                <li class="notification-item">
+                    Reminder: Submit grades for CS101 by Friday.
+                </li>
+            </ul>
+        </section>
+
+        <section class="timetable-section">
+            <h2><i class="fas fa-calendar-alt"></i> Timetable</h2>
+            <p>Timetable information will be displayed here.</p>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

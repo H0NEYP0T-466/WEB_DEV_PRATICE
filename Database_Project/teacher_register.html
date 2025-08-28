@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Registration</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="registration_style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+       <!-- <h1 class="institution-name">Your Institution Name</h1>  -->
+    </header>
+
+    <div class="dashboard-container">
+        <section class="registration-section">
+            <h2>
+                <i class="fas fa-chalkboard-teacher"></i> Teacher Registration
+            </h2>
+            <form action="register.php" method="post" class="registration-form horizontal-form">
+                <input type="hidden" name="user_type" value="teacher">
+                <div class="form-group">
+                    <label for="username">
+                        <i class="fas fa-user"></i> Username:
+                    </label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">
+                        <i class="fas fa-lock"></i> Password:
+                    </label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">
+                        <i class="fas fa-lock"></i> Confirm Password:
+                    </label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="name">
+                        <i class="fas fa-id-card"></i> Full Name:
+                    </label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">
+                        <i class="fas fa-envelope"></i> Email:
+                    </label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="teacher_id">
+                        <i class="fas fa-id-badge"></i> Teacher ID:
+                    </label>
+                    <input type="text" id="teacher_id" name="teacher_id" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">
+                        <i class="fas fa-book"></i> Subject:
+                    </label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="date_of_joining">
+                        <i class="fas fa-calendar-alt"></i> Date of Joining:
+                    </label>
+                    <input type="date" id="date_of_joining" name="date_of_joining" required>
+                </div>
+                <div class="form-group">
+                    <label for="department">
+                        <i class="fas fa-building"></i> Department:
+                    </label>
+                    <input type="text" id="department" name="department" required>
+                </div>
+                <button type="submit" class="register-button">
+                    <i class="fas fa-user-plus"></i> Register as Teacher
+                </button>
+            </form>
+            <p>Already have an account? <a href="index.html">Login here</a></p>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

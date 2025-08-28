@@ -1,0 +1,15 @@
+h1{
+    display: block;
+    background-color: black;
+    color:green;
+    height: 200px;
+    width: 200px;
+    font-size:xx-large;
+}
+.box
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 200px;
+}

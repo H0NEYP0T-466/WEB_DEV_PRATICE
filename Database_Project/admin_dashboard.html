@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1 class="institution-name">Your Institution Name</h1>
+        <nav>
+            <a href="index.html" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+
+        <section class="profile-section">
+            <div class="profile-image">
+                <img src="placeholder-profile.png" alt="Admin Profile Picture">
+            </div>
+            <div class="profile-details">
+                <h2>Welcome, <span id="admin-name">Administrator</span>!</h2>
+                <p><i class="fas fa-envelope"></i> Email: <span id="admin-email">admin@example.com</span></p>
+            </div>
+        </section>
+
+        <section class="user-management-section">
+            <h2><i class="fas fa-users"></i> User Management</h2>
+            <p>Manage student, teacher, and admin accounts.</p>
+            <button class="manage-users-button">Manage Users</button>
+        </section>
+
+        <section class="course-management-section">
+            <h2><i class="fas fa-book"></i> Course Management</h2>
+            <p>Create, edit, and delete courses.</p>
+            <button class="manage-courses-button">Manage Courses</button>
+        </section>
+
+        <section class="system-settings-section">
+            <h2><i class="fas fa-cog"></i> System Settings</h2>
+            <p>Configure system settings and manage timetables.</p>
+            <button class="system-settings-button">System Settings</button>
+        </section>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>

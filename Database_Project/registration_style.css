@@ -1,0 +1,93 @@
+/* Styles specific to registration forms */
+
+.registration-section {
+    width: 100%;
+    max-width: 1200px; /* Increased max-width */
+    margin: 20px auto;
+    padding: 30px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeInUp 0.7s ease-out;
+}
+
+.registration-section h2 {
+    text-align: left;
+    margin-bottom: 30px;
+    color: #2196F3;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.registration-form.horizontal-form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.registration-form.horizontal-form .form-group {
+    width: calc(33.33% - 10px); /* Adjust the number of form element */
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+
+.registration-form label {
+    display: block;
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+    font-size: 0.9em; /* Reduced font size for labels */
+}
+
+.registration-form input[type="text"],
+.registration-form input[type="password"],
+.registration-form input[type="email"],
+.registration-form input[type="date"],
+.registration-form textarea,
+.registration-form select {
+    width: 100%;
+    padding: 10px; /* Reduced padding */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    background-color: #fff;
+    color: #333;
+    transition: background-color 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 0.9em; /* Reduced font size for inputs */
+}
+
+.registration-form input[type="text"]:focus,
+.registration-form input[type="password"]:focus,
+.registration-form input[type="email"]:focus,
+.registration-form input[type="date"]:focus,
+.registration-form textarea:focus,
+.registration-form select:focus {
+    background-color: #e0f7fa;
+    outline: none;
+    border-color: #29b6f6;
+}
+
+.registration-form textarea {
+    resize: vertical;
+}
+
+.registration-form .register-button {
+    background-color: #29b6f6;
+    color: white;
+    padding: 12px 20px; /* Reduced padding */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em; /* Reduced font size */
+    transition: background-color 0.3s ease;
+    display: block;
+    margin: 20px auto 0;
+    width: fit-content;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.registration-form .register-button:hover {
+    background-color: #03a9f4;
+}

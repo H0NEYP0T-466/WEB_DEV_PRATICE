@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <h1 class="institution-name">LGU UNIVERSITY</h1>
+        <nav>
+            <a href="index.html" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+
+        <section class="profile-section">
+            <div class="profile-image">
+                <img src="placeholder-profile.png" alt="Profile Picture"> <!-- Replace with actual image URL -->
+            </div>
+            <div class="profile-details">
+                <h2>Welcome, <span id="student-name">Student Name</span>!</h2>
+                <p><i class="fas fa-envelope"></i> Email: <span id="student-email">student@example.com</span></p>
+                <p><i class="fas fa-id-badge"></i> Student ID: <span id="student-id">123456789</span></p>
+            </div>
+        </section>
+
+        <section class="courses-section">
+            <h2><i class="fas fa-book"></i> Enrolled Courses</h2>
+            <ul class="course-list">
+                <li class="course-item">
+                    <span class="course-code">CS101</span> - Introduction to Computer Science
+                </li>
+                <li class="course-item">
+                    <span class="course-code">MATH201</span> - Calculus II
+                </li>
+                <li class="course-item">
+                    <span class="course-code">ENG101</span> - English Composition
+                </li>
+            </ul>
+        </section>
+
+        <section class="grades-section">
+            <h2><i class="fas fa-graduation-cap"></i> Grades</h2>
+            <table class="grades-table">
+                <thead>
+                    <tr>
+                        <th>Course</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CS101</td>
+                        <td>A</td>
+                    </tr>
+                    <tr>
+                        <td>MATH201</td>
+                        <td>B+</td>
+                    </tr>
+                    <tr>
+                        <td>ENG101</td>
+                        <td>A-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="timetable-section">
+            <h2><i class="fas fa-calendar-alt"></i> Timetable</h2>
+            <p>Timetable information will be displayed here.</p>
+        </section>
+
+        <section class="fees-section">
+            <h2><i class="fas fa-dollar-sign"></i> Fees</h2>
+            <p>Fees information will be displayed here.</p>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
