@@ -5,7 +5,6 @@ const ai = new GoogleGenAI({
   apiKey: process.env.geminiApiKey || process.env.GEMINI_API_KEY,
 });
 
-// Try several multimodal models in order until one works for your account/region.
 const CANDIDATE_MODELS = [
   "gemini-2.5-pro",
   "gemini-2.0-flash",
