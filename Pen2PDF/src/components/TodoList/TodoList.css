@@ -1,0 +1,476 @@
+.todo-container {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  padding: 20px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Helvetica, Arial, sans-serif;
+}
+
+.todo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.back-btn {
+  background: var(--panel-2);
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 18px;
+  transition: background .15s ease, color .2s ease;
+  flex-shrink: 0;
+}
+
+.back-btn:hover {
+  background: var(--btn-bg-hover);
+  color: var(--text);
+}
+
+.todo-header h1 {
+  color: var(--text);
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.add-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: bold;
+  background: var(--btn-bg-hover);
+  border: 1px solid var(--accent);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.add-card-btn:hover {
+  background: #333;
+  border-color: var(--text);
+  transform: scale(1.05);
+}
+
+.plus-icon {
+  line-height: 1;
+}
+
+.loading {
+  text-align: center;
+  color: var(--muted);
+  font-size: 1.2rem;
+  margin-top: 50px;
+}
+
+.error-message {
+  background: var(--danger);
+  color: white;
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.todo-cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+@media (max-width: 1000px) {
+  .todo-cards-container {
+    gap: 12px;
+  }
+  
+  .todo-card {
+    flex: 1 1 calc(50% - 6px);
+    min-width: 280px;
+  }
+}
+
+@media (max-width: 600px) {
+  .todo-cards-container {
+    gap: 8px;
+  }
+  
+  .todo-card {
+    flex: 1 1 100%;
+    min-width: auto;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  color: var(--muted);
+  font-size: 1.1rem;
+  margin-top: 50px;
+  padding: 40px;
+  background: var(--panel);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.todo-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 0;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  flex: 1 1 calc(33.333% - 11px);
+  min-width: 300px;
+  align-self: flex-start;
+}
+
+.todo-card:hover {
+  border-color: var(--accent);
+  background: var(--panel-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.title-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.title-input {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 8px 12px;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.title-input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.card-title {
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+  flex-grow: 1;
+  margin-right: 12px;
+}
+
+.card-title:hover {
+  background: var(--btn-bg);
+}
+
+.card-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.btn.small {
+  padding: 4px 8px;
+  font-size: 12px;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 4px;
+}
+
+.sub-todos-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.subtodo-edit-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.subtodo-input {
+  flex: 1;
+  background: var(--panel-2);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 6px 8px;
+  color: var(--text);
+  font-size: 0.9rem;
+  outline: none;
+}
+
+.subtodo-input::placeholder {
+  color: var(--muted);
+  font-style: italic;
+}
+
+.empty-subtodos {
+  text-align: center;
+  color: var(--muted);
+  font-style: italic;
+  padding: 20px;
+  background: var(--btn-bg);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
+
+.sub-todo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: var(--btn-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  margin-bottom: 4px;
+}
+
+.sub-todo:hover {
+  border-color: var(--accent);
+  background: var(--btn-bg-hover);
+}
+
+.sub-todo.pinned {
+  border-color: #fbbf24;
+  background: rgba(251, 191, 36, 0.1);
+}
+
+.sub-todo.pinned:hover {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.sub-todo.completed {
+  opacity: 0.7;
+}
+
+.sub-todo.completed .sub-todo-text {
+  text-decoration: line-through;
+  color: var(--muted);
+}
+
+.sub-todo-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.pin-indicator {
+  font-size: 0.7rem;
+  margin-left: 4px;
+}
+
+.sub-todo-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--success);
+  cursor: pointer;
+}
+
+.sub-todo-text {
+  color: var(--text);
+  font-size: 0.9rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+  flex-grow: 1;
+}
+
+.sub-todo-text:hover {
+  background: var(--panel);
+}
+
+.sub-todo-actions {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.pin-btn {
+  font-size: 0.7rem;
+  padding: 2px 6px !important;
+  min-width: 20px !important;
+  height: 20px !important;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.pin-btn:hover {
+  opacity: 1;
+}
+
+.pin-btn.pinned {
+  opacity: 1;
+  background: rgba(251, 191, 36, 0.2) !important;
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+}
+
+.expand-toggle {
+  text-align: center;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.expand-btn {
+  font-size: 0.8rem;
+  padding: 4px 12px !important;
+  color: var(--accent) !important;
+  background: transparent !important;
+}
+
+/* Existing button styles from App.css are inherited */
+.btn {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--btn-bg);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: border-color .2s ease, background .2s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+}
+
+.btn:hover {
+  border-color: var(--accent);
+  background: var(--btn-bg-hover);
+}
+
+.btn.primary {
+  background: var(--btn-bg-hover);
+  border: 1px solid var(--accent);
+  color: var(--text);
+}
+
+.btn.primary:hover { 
+  background: #333;
+  border-color: var(--text);
+}
+
+.btn.outline {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.btn.outline:hover { 
+  background: var(--panel); 
+}
+
+.btn.danger {
+  background: linear-gradient(90deg, #b91c1c, #dc2626);
+  border: none;
+  color: white;
+}
+
+.btn.danger:hover { 
+  filter: brightness(1.07); 
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .todo-container {
+    padding: 16px;
+  }
+  
+  .todo-header h1 {
+    font-size: 2rem;
+  }
+  
+  .header-left {
+    gap: 12px;
+  }
+  
+  .todo-card {
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .card-title {
+    margin-right: 0;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  
+  .card-actions {
+    justify-content: center;
+  }
+  
+  .title-edit-container {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .sub-todo {
+    padding: 6px 10px;
+  }
+  
+  .sub-todo-text {
+    font-size: 0.85rem;
+  }
+}
