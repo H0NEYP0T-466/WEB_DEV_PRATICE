@@ -11,7 +11,15 @@ const {
   updateSubTodo,
   deleteSubTodo
 } = require('./controller/dbcontroller');
-const mongoose = require('mongoose');
+const {
+  getAllTimetableEntries,
+  createTimetableEntry,
+  updateTimetableEntry,
+  deleteTimetableEntry,
+  deleteAllTimetableEntries,
+  importTimetableEntries
+} = require('./controller/timetableController');
+const { todoConnection, timetableConnection } = require('./config/database');
 
 const app = express();
 app.use(cors());
@@ -35,12 +43,22 @@ app.post('/api/todos/:id/subtodos', addSubTodo);
 app.put('/api/todos/:id/subtodos/:subTodoId', updateSubTodo);
 app.delete('/api/todos/:id/subtodos/:subTodoId', deleteSubTodo);
 
-mongoose.connect('mongodb://127.0.0.1:27017/todolist')
-  .then(() => {
-    console.log('MongoDB connected');
-    app.listen(8000, () => console.log('Server running on port 8000'));
-  })
-  .catch(err => {
-    console.error('MongoDB connection error:', err);
-    process.exit(1);
-  });
+// Timetable API endpoints
+app.get('/api/timetable', getAllTimetableEntries);
+app.post('/api/timetable', createTimetableEntry);
+app.put('/api/timetable/:id', updateTimetableEntry);
+app.delete('/api/timetable/:id', deleteTimetableEntry);
+app.delete('/api/timetable', deleteAllTimetableEntries);
+app.post('/api/timetable/import', importTimetableEntries);
+
+// Start server when both database connections are ready
+Promise.all([
+  todoConnection.asPromise(),
+  timetableConnection.asPromise()
+]).then(() => {
+  console.log('🚀 All MongoDB connections established');
+  app.listen(8000, () => console.log('🌟 Server running on port 8000'));
+}).catch(err => {
+  console.error('❌ MongoDB connection error:', err);
+  process.exit(1);
+});
