@@ -1,16 +1,53 @@
-# 🚀 WEB_DEV_PRACTICE - Full Stack Development 
+# 🚀 WEB_DEV_PRATICE - Full Stack Development
 
-Welcome to **WEB_DEV_PRACTICE** - a comprehensive collection of web development projects showcasing full-stack capabilities, AI integration, and modern web technologies! This repository serves as both a learning playground and a professional portfolio, featuring everything from basic HTML/CSS exercises to sophisticated MERN stack applications with AI-powered features.
+<p align="center">
 
-## 📋 Table of Contents
+  <!-- Core -->
+  ![GitHub License](https://img.shields.io/github/license/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=brightgreen)  
+  ![GitHub Stars](https://img.shields.io/github/stars/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=yellow)  
+  ![GitHub Forks](https://img.shields.io/github/forks/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=blue)  
+  ![GitHub Issues](https://img.shields.io/github/issues/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=red)  
+  ![GitHub Pull Requests](https://img.shields.io/github/issues-pr/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=orange)  
+  ![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-brightgreen?style=for-the-badge)  
 
-- [Features](#-features)
-- [Installation](#-installation)
-- [Usage](#-usage)
-- [Projects Overview](#-projects-overview)
-- [Technologies](#-technologies)
-- [Contributing](#-contributing)
-- [License](#-license)
+  <!-- Activity -->
+  ![Last Commit](https://img.shields.io/github/last-commit/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=purple)  
+  ![Commit Activity](https://img.shields.io/github/commit-activity/m/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=teal)  
+  ![Repo Size](https://img.shields.io/github/repo-size/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=blueviolet)  
+  ![Code Size](https://img.shields.io/github/languages/code-size/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=indigo)  
+
+  <!-- Languages -->
+  ![Top Language](https://img.shields.io/github/languages/top/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=critical)  
+  ![Languages Count](https://img.shields.io/github/languages/count/H0NEYP0T-466/WEB_DEV_PRATICE?style=for-the-badge&color=success)  
+
+  <!-- Community -->
+  ![Documentation](https://img.shields.io/badge/Docs-Available-green?style=for-the-badge&logo=readthedocs&logoColor=white)  
+  ![Open Source Love](https://img.shields.io/badge/Open%20Source-%E2%9D%A4-red?style=for-the-badge)  
+
+</p>
+
+Welcome to **WEB_DEV_PRATICE** - a comprehensive collection of web development projects showcasing full-stack capabilities, AI integration, and modern web technologies! This repository serves as both a learning playground and a professional portfolio, featuring everything from basic HTML/CSS exercises to sophisticated MERN stack applications with AI-powered features.
+
+## 🔗 Links
+
+- [🚀 Live Demo](#-usage) - See the applications in action
+- [📚 Documentation](#-table-of-contents) - Complete setup and usage guide
+- [🐛 Issues](https://github.com/H0NEYP0T-466/WEB_DEV_PRATICE/issues) - Report bugs or request features
+- [🤝 Contributing](CONTRIBUTING.md) - Help improve the project
+
+## 📑 Table of Contents
+
+- [✨ Features](#-features)
+- [🚀 Installation](#-installation)
+- [⚡ Usage](#-usage)
+- [📂 Projects Overview](#-projects-overview)
+- [📦 Submodules](#-submodules)
+- [🛠 Tech Stack](#-tech-stack)
+- [📂 Folder Structure](#-folder-structure)
+- [🤝 Contributing](#-contributing)
+- [📜 License](#-license)
+- [🛡 Security](#-security)
+- [📏 Code of Conduct](#-code-of-conduct)
 
 ## ✨ Features
 
@@ -172,7 +209,53 @@ npm run dev
 | **Game Logic** | chess.js |
 | **Deployment** | Vercel, npm scripts |
 
-## 🛠️ Technologies
+## 📦 Submodules
+
+This repository includes several Git submodules that contain specialized applications:
+
+- [**ChessVision**](https://github.com/H0NEYP0T-466/ChessVision) → Real-time multiplayer chess platform with AI analysis  
+- [**DEV_LENS**](https://github.com/H0NEYP0T-466/DEV-LENS) → AI-powered code reviewer with automated analysis  
+- [**Animotion**](https://github.com/H0NEYP0T-466/Animotion) → Frontend animation and motion graphics project  
+- [**GhibliVerse**](https://github.com/H0NEYP0T-466/GhibiVerse) → Studio Ghibli movie explorer with modern UI  
+- [**NeuralMate**](https://github.com/H0NEYP0T-466/NeuralMate) → AI personal assistant with conversational interface  
+- [**PASTE_APP**](https://github.com/H0NEYP0T-466/PASTE_APP) → Code snippet sharing and collaboration tool  
+- [**fullStackProject**](https://github.com/H0NEYP0T-466/fullStackProject) → Comprehensive full-stack development examples
+
+## 🛠 Tech Stack
+
+### Languages
+![JavaScript](https://img.shields.io/badge/JavaScript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+![HTML5](https://img.shields.io/badge/HTML5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
+
+### Frameworks & Libraries
+![React](https://img.shields.io/badge/React-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Express.js](https://img.shields.io/badge/Express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Redux](https://img.shields.io/badge/Redux-%23593d88.svg?style=for-the-badge&logo=redux&logoColor=white)
+![Socket.io](https://img.shields.io/badge/Socket.io-black?style=for-the-badge&logo=socket.io&badgeColor=010101)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?style=for-the-badge&logo=react-router&logoColor=white)
+![React Hook Form](https://img.shields.io/badge/React%20Hook%20Form-%23EC5990.svg?style=for-the-badge&logo=reacthookform&logoColor=white)
+
+### Databases
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+![Mongoose](https://img.shields.io/badge/Mongoose-%23880000.svg?style=for-the-badge&logo=mongoose&logoColor=white)
+
+### DevOps / CI / Tools
+![Vite](https://img.shields.io/badge/Vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white)
+![NPM](https://img.shields.io/badge/NPM-%23000000.svg?style=for-the-badge&logo=npm&logoColor=white)
+![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
+![Git](https://img.shields.io/badge/Git-fc6d26?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)
+![Nodemon](https://img.shields.io/badge/NODEMON-%23323330.svg?style=for-the-badge&logo=nodemon&logoColor=%BBDEAD)
+
+### Cloud / Hosting
+![Vercel](https://img.shields.io/badge/Vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white)
+![Netlify](https://img.shields.io/badge/Netlify-%23000000.svg?style=for-the-badge&logo=netlify&logoColor=#00C7B7)
+
+### AI & ML
+![ChatGPT](https://img.shields.io/badge/ChatGPT-74aa9c?style=for-the-badge&logo=openai&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?style=for-the-badge&logo=google&logoColor=white)
 
 ### Core Stack
 - **Frontend**: React 19+, Vite, TailwindCSS
@@ -193,11 +276,49 @@ npm run dev
 - **HTTP Client**: Axios for API communications
 - **Form Handling**: React Hook Form for efficient form management
 
+## 📂 Folder Structure
+
+```
+WEB_DEV_PRATICE/
+├── 📁 CHESS/                     # ChessVision - Real-time multiplayer chess (submodule)
+├── 📁 DEV_LENS/                  # AI code reviewer application (submodule)
+├── 📁 NeuralMate/                # AI personal assistant (submodule)
+├── 📁 Ideovent_Task/             # GhibliVerse - Studio Ghibli movie explorer (submodule)
+├── 📁 PASTE_APP/                 # Code snippet sharing tool (submodule)
+├── 📁 fullStackProject/          # Full-stack development examples (submodule)
+├── 📁 FRONTEND_PROJECT/          # Animotion - Frontend animations (submodule)
+├── 📁 Pen2PDF/                   # PDF text extraction tool
+│   ├── 📁 src/                   # React frontend source
+│   ├── 📁 backend/               # Express.js backend
+│   ├── 📄 CONTRIBUTING.md        # Project-specific contribution guide
+│   └── 📄 LICENSE               # MIT License
+├── 📁 backend/                   # Backend learning projects
+│   ├── 📁 expressProject/        # Express.js fundamentals
+│   ├── 📁 mongoDB/              # MongoDB integration examples
+│   └── 📁 mongoose/             # Mongoose ODM implementation
+├── 📁 React/                     # React learning projects
+│   └── 📁 react-project-one/    # Advanced React with Redux
+├── 📁 basics/                    # HTML/CSS fundamentals
+├── 📁 project#1/                 # PUBG Mobile Store showcase
+├── 📁 project#2/                 # Additional frontend practice
+├── 📁 New Web/                   # "Das Grune" landing page
+├── 📁 Basic/                     # Basic web development exercises
+├── 📁 Database_Project/          # Database integration projects
+├── 📄 README.md                  # Main project documentation
+├── 📄 LICENSE                    # MIT License
+├── 📄 CONTRIBUTING.md            # Contribution guidelines
+├── 📄 SECURITY.md               # Security policy
+├── 📄 CODE_OF_CONDUCT.md        # Code of conduct
+└── 📄 .gitmodules               # Git submodules configuration
+```
+
 ## 🤝 Contributing
 
 We welcome contributions to improve and expand this portfolio! Whether you're fixing bugs, adding features, improving documentation, or suggesting new project ideas, your input is valuable.
 
-### How to Contribute
+For detailed contribution guidelines, please see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### Quick Start for Contributors
 
 1. **Fork the repository**
    ```bash
@@ -209,65 +330,25 @@ We welcome contributions to improve and expand this portfolio! Whether you're fi
    git checkout -b feature/your-feature-name
    ```
 
-3. **Make your changes**
-   - Follow existing code style and conventions
-   - Add comments for complex logic
-   - Update documentation if necessary
-
-4. **Test your changes**
+3. **Make your changes and test**
    ```bash
    npm run lint  # Check code quality
    npm run build # Ensure builds work
    ```
 
-5. **Commit and push**
-   ```bash
-   git commit -m "Add: your feature description"
-   git push origin feature/your-feature-name
-   ```
-
-6. **Open a Pull Request**
-   - Provide a clear description of changes
-   - Reference any related issues
-   - Include screenshots for UI changes
-
-### Development Guidelines
-
-- **Code Style**: Follow existing patterns and ESLint rules
-- **Commit Messages**: Use conventional commits (Add:, Fix:, Update:, etc.)
-- **Documentation**: Update README files for new projects
-- **Testing**: Ensure all projects run without errors
-- **Performance**: Consider bundle size and load times
-
-### Project Ideas
-
-Feel free to suggest or contribute:
-- New AI integration examples
-- Additional game implementations
-- Modern CSS/animation demonstrations
-- Backend API examples
-- Database integration tutorials
-- Mobile-responsive designs
+4. **Submit a Pull Request**
 
 ## 📜 License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-```
-MIT License
+## 🛡 Security
 
-Copyright (c) 2025 H0NEYP0T-466
+For security concerns and vulnerability reporting, please see our [SECURITY.md](SECURITY.md) file.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 📏 Code of Conduct
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-```
+This project follows the Contributor Covenant Code of Conduct. Please read [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for details on our community standards.
 
 ---
 
@@ -291,3 +372,5 @@ copies or substantial portions of the Software.
 **📞 Questions or suggestions?** Open an issue or reach out through GitHub discussions.
 
 **⭐ Enjoyed the projects?** Star this repository to show your support!
+
+<p align="center">Made with ❤ by H0NEYP0T-466</p>
