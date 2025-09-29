@@ -23,3 +23,6 @@
 [submodule "fullStackProject"]
 	path = fullStackProject
 	url = https://github.com/H0NEYP0T-466/fullStackProject.git
+[submodule "HCI_TASK"]
+	path = HCI_TASK
+	url = https://github.com/H0NEYP0T-466/HCI_TASK.git
