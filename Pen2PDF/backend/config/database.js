@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const todoConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/todolist');
 const timetableConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/timetable');
 const notesConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/notes');
+const chatConnection = mongoose.createConnection('mongodb://127.0.0.1:27017/chat');
 
 // Handle connection events
 todoConnection.on('connected', () => {
@@ -18,6 +19,10 @@ notesConnection.on('connected', () => {
   console.log('✅ Notes database connected: mongodb://127.0.0.1:27017/notes');
 });
 
+chatConnection.on('connected', () => {
+  console.log('✅ Chat database connected: mongodb://127.0.0.1:27017/chat');
+});
+
 todoConnection.on('error', (err) => {
   console.error('❌ Todo database connection error:', err);
 });
@@ -30,4 +35,8 @@ notesConnection.on('error', (err) => {
   console.error('❌ Notes database connection error:', err);
 });
 
-module.exports = { todoConnection, timetableConnection, notesConnection };
+chatConnection.on('error', (err) => {
+  console.error('❌ Chat database connection error:', err);
+});
+
+module.exports = { todoConnection, timetableConnection, notesConnection, chatConnection };
