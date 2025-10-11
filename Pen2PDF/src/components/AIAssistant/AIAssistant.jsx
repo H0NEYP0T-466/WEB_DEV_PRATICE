@@ -3,10 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { marked } from 'marked';
 import markedKatex from "marked-katex-extension";
+import html2pdf from 'html2pdf.js';
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import 'katex/dist/katex.min.css';
 import './AIAssistant.css';
 
-// Configure marked with KaTeX extension for LaTeX rendering
 marked.use(markedKatex({
   throwOnError: false,
   nonStandard: true
@@ -72,11 +73,12 @@ function AIAssistant() {
     }
   }, [searchQuery, notes]);
 
-  // Load chat history from backend
+  // Load chat history from backend (last 50 messages only)
   const loadChatHistory = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/chat');
       if (response.data.success) {
+        // Backend returns only last 50 messages
         setMessages(response.data.data.messages || []);
         if (response.data.data.currentModel) {
           setSelectedModel(response.data.data.currentModel);
@@ -163,7 +165,6 @@ function AIAssistant() {
       contextNotes: selectedNotes
     };
 
-    // Add user message to UI immediately
     setMessages([...messages, userMessage]);
     setInputMessage('');
     setUploadedFiles([]);
@@ -181,7 +182,14 @@ function AIAssistant() {
         // Re-fetch to get the latest messages including the assistant's response
         const chatResponse = await axios.get('http://localhost:8000/api/chat');
         if (chatResponse.data.success) {
-          setMessages(chatResponse.data.data.messages || []);
+          let updatedMessages = chatResponse.data.data.messages || [];
+          
+          // Maintain only last 50 messages in memory
+          if (updatedMessages.length > 50) {
+            updatedMessages = updatedMessages.slice(-50);
+          }
+          
+          setMessages(updatedMessages);
         }
       }
     } catch (error) {
@@ -216,6 +224,308 @@ function AIAssistant() {
       } catch (error) {
         console.error('Error clearing chat:', error);
       }
+    }
+  };
+
+  // Copy response to clipboard
+  const copyResponse = async (content) => {
+    try {
+      await navigator.clipboard.writeText(content);
+    } catch (error) {
+      console.error('Error copying to clipboard:', error);
+    }
+  };
+
+  // Export response to PDF (updated to use the same style as Notes.jsx)
+  const exportToPDF = async (content, messageId) => {
+    try {
+      const html = marked(content);
+      const element = document.createElement('div');
+      element.className = 'printable-light pdf-page';
+
+      // Get KaTeX CSS from the stylesheet
+      const katexCSS = Array.from(document.styleSheets)
+        .filter(sheet => {
+          try {
+            return sheet.href && sheet.href.includes('katex');
+          } catch {
+            return false;
+          }
+        })
+        .map(sheet => {
+          try {
+            return Array.from(sheet.cssRules).map(rule => rule.cssText).join('\n');
+          } catch {
+            return '';
+          }
+        })
+        .join('\n');
+
+      element.innerHTML = `
+        <style>
+          /* KaTeX styles for math rendering */
+          ${katexCSS}
+          
+          /* Print-safe CSS for PDF generation */
+          @page {
+            margin: 12mm;
+          }
+          
+          .pdf-page {
+            padding: 8mm;
+            position: relative;
+          }
+          
+          /* Prevent word breaking and control text flow */
+          body, p, li, h1, h2, h3, h4, h5, h6 {
+            word-break: normal;
+            overflow-wrap: normal;
+            word-wrap: normal;
+            hyphens: none;
+            -webkit-hyphens: none;
+            -moz-hyphens: none;
+            -ms-hyphens: none;
+            text-align: justify;
+            text-justify: inter-word;
+          }
+          
+          /* Stronger word protection for all text elements */
+          * {
+            word-break: normal !important;
+            overflow-wrap: normal !important;
+            word-wrap: normal !important;
+            hyphens: none !important;
+            -webkit-hyphens: none !important;
+            -moz-hyphens: none !important;
+            -ms-hyphens: none !important;
+          }
+          
+          /* Prevent orphaned elements and bad page breaks */
+          h1, h2, h3, h4, h5, h6, img, table, pre, blockquote {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+          }
+          
+          /* Keep headings with following content */
+          h1, h2, h3, h4, h5, h6 {
+            break-after: avoid;
+            page-break-after: avoid;
+            -webkit-column-break-after: avoid;
+          }
+          
+          /* Math equation page break protection */
+          .katex, .katex-display {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+          }
+          
+          /* Block math equations get extra spacing and centering */
+          .katex-display {
+            margin: 1em 0;
+            text-align: center;
+          }
+          
+          /* Inline math stays with surrounding text */
+          p:has(.katex) {
+            break-inside: avoid;
+            page-break-inside: avoid;
+            -webkit-column-break-inside: avoid;
+          }
+          
+          /* Orphan and widow control */
+          p {
+            orphans: 2;
+            widows: 2;
+          }
+          
+          .printable-light {
+            max-width: none;
+            padding: 0;
+            color: #333;
+            background: #ffffff;
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            position: relative;
+          }
+          
+          .printable-light h1, .printable-light h2, .printable-light h3 {
+            color: #333;
+            margin: 0 0 12px 0;
+            line-height: 1.25;
+            font-weight: 700;
+          }
+          
+          .printable-light p, .printable-light li {
+            font-size: 12.5pt;
+            line-height: 1.6;
+            color: #333;
+          }
+          
+          /* Watermark styles */
+          .watermark {
+            position: fixed;
+            bottom: 16pt;
+            right: 16pt;
+            opacity: 0.2;
+            font-size: 14pt;
+            color: #000;
+            pointer-events: none;
+            z-index: 1000;
+            font-family: 'Arial', sans-serif;
+          }
+        </style>
+        <div class="watermark">~honeypot</div>
+        ${html}
+      `;
+
+      const opt = {
+        margin: [34, 34, 34, 34], // 12mm converted to pt (12mm ≈ 34pt)
+        filename: `ai-response-${messageId}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+        pagebreak: { 
+          mode: ["css", "legacy"], 
+          avoid: ["h1", "h2", "h3", "img", "table", "pre", "blockquote", ".katex", ".katex-display"]
+        }
+      };
+
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error('Error exporting to PDF:', error);
+    }
+  };
+
+  // Export response to Word (DOCX)
+  const exportToWord = async (content, messageId) => {
+    try {
+      // Parse markdown and create DOCX paragraphs
+      const lines = content.split('\n');
+      const children = [];
+      
+      for (const line of lines) {
+        if (line.trim() === '') {
+          children.push(new Paragraph({ text: '' }));
+          continue;
+        }
+        
+        // Handle headings
+        if (line.startsWith('# ')) {
+          children.push(new Paragraph({
+            text: line.substring(2),
+            heading: HeadingLevel.HEADING_1,
+            spacing: { before: 240, after: 120 }
+          }));
+        } else if (line.startsWith('## ')) {
+          children.push(new Paragraph({
+            text: line.substring(3),
+            heading: HeadingLevel.HEADING_2,
+            spacing: { before: 200, after: 100 }
+          }));
+        } else if (line.startsWith('### ')) {
+          children.push(new Paragraph({
+            text: line.substring(4),
+            heading: HeadingLevel.HEADING_3,
+            spacing: { before: 160, after: 80 }
+          }));
+        } else if (line.startsWith('- ') || line.startsWith('* ')) {
+          children.push(new Paragraph({
+            text: line.substring(2),
+            bullet: { level: 0 },
+            spacing: { before: 60, after: 60 }
+          }));
+        } else if (/^\d+\.\s/.test(line)) {
+          const text = line.replace(/^\d+\.\s/, '');
+          children.push(new Paragraph({
+            text: text,
+            numbering: { reference: 'default-numbering', level: 0 },
+            spacing: { before: 60, after: 60 }
+          }));
+        } else {
+          // Regular paragraph - handle basic markdown formatting
+          const runs = [];
+          const parts = line.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
+          
+          for (const part of parts) {
+            if (part.startsWith('**') && part.endsWith('**')) {
+              runs.push(new TextRun({ text: part.slice(2, -2), bold: true }));
+            } else if (part.startsWith('*') && part.endsWith('*')) {
+              runs.push(new TextRun({ text: part.slice(1, -1), italics: true }));
+            } else if (part.startsWith('`') && part.endsWith('`')) {
+              runs.push(new TextRun({ 
+                text: part.slice(1, -1), 
+                font: 'Courier New',
+                shading: { fill: 'E5E7EB' }
+              }));
+            } else if (part) {
+              runs.push(new TextRun(part));
+            }
+          }
+          
+          children.push(new Paragraph({
+            children: runs.length > 0 ? runs : [new TextRun(line)],
+            spacing: { before: 100, after: 100 }
+          }));
+        }
+      }
+      
+      const doc = new Document({
+        sections: [{
+          properties: {},
+          children: children
+        }],
+        numbering: {
+          config: [{
+            reference: 'default-numbering',
+            levels: [{
+              level: 0,
+              format: 'decimal',
+              text: '%1.',
+              alignment: AlignmentType.START
+            }]
+          }]
+        }
+      });
+      
+      const blob = await Packer.toBlob(doc);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai-response-${messageId}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+    } catch (error) {
+      console.error('Error exporting to Word:', error);
+    }
+  };
+
+  const saveToNotes = async (content) => {
+    try {
+      const title = prompt('Enter a title for this note:');
+      if (!title) return;
+      
+      const noteData = {
+        title: title,
+        generatedNotes: content,
+        modelUsed: 'AI Assistant',
+        originalFiles: []
+      };
+      
+      const response = await axios.post('http://localhost:8000/api/notes', noteData);
+      
+      if (response.data.success) {
+        alert('Note saved successfully!');
+        // Reload notes in case context panel is open
+        loadNotes();
+      }
+    } catch (error) {
+      console.error('Error saving to notes:', error);
+      alert('Failed to save to notes');
     }
   };
 
@@ -321,6 +631,38 @@ function AIAssistant() {
                   {msg.contextNotes && msg.contextNotes.length > 0 && (
                     <div className="message-context">
                       <span>📚 Using {msg.contextNotes.length} note{msg.contextNotes.length > 1 ? 's' : ''} as context</span>
+                    </div>
+                  )}
+                  {msg.role === 'assistant' && (
+                    <div className="message-actions">
+                      <button 
+                        className="action-btn" 
+                        onClick={() => copyResponse(msg.content)}
+                        title="Copy response to clipboard"
+                      >
+                        📋 Copy Response
+                      </button>
+                      <button 
+                        className="action-btn" 
+                        onClick={() => exportToPDF(msg.content, msg.id)}
+                        title="Export response to PDF"
+                      >
+                        📄 Export to PDF
+                      </button>
+                      <button 
+                        className="action-btn" 
+                        onClick={() => exportToWord(msg.content, msg.id)}
+                        title="Export response to Word"
+                      >
+                        📝 Export to Word
+                      </button>
+                      <button 
+                        className="action-btn" 
+                        onClick={() => saveToNotes(msg.content)}
+                        title="Save response to Notes"
+                      >
+                        💾 Save to Notes
+                      </button>
                     </div>
                   )}
                 </div>

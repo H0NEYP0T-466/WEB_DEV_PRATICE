@@ -42,15 +42,15 @@ Pen2PDF Suite is a modern web application that offers six powerful productivity 
 - [🚀 Features](#-features)
 - [⚡ Tech Stack](#-tech-stack)
 - [📋 Prerequisites](#-prerequisites)
-- [🛠️ Installation](#️-installation)
+- [🛠️ Installation](#-installation)
 - [💻 Usage](#-usage)
-  - [📐 LaTeX Formula Guide](LATEX_GUIDE.md)
 - [📁 Project Structure](#-project-structure)
+- [📦 Submodules](#-submodules)
 - [🤝 Contributing](#-contributing)
 - [📄 License](#-license)
-- [🛡️ Security](#️-security)
+- [🛡️ Security](#-security)
 - [📏 Code of Conduct](#-code-of-conduct)
-- [🗺️ Roadmap](#️-roadmap)
+- [🗺️ Roadmap](#-roadmap)
 - [🙏 Acknowledgements](#-acknowledgements)
 
 ## 🚀 Features
@@ -87,16 +87,6 @@ Pen2PDF Suite is a modern web application that offers six powerful productivity 
 - **🔄 Note Regeneration**: Retry note generation with improved prompts
 - **💾 Persistent Storage**: Save and organize notes in a dedicated library
 - **🎯 Blank Note Creation**: Start with empty documents for manual note-taking
-
-### 🎨 Whiteboard - Digital Collaboration
-- **✏️ Freehand Drawing**: Draw with customizable pen colors and stroke widths
-- **📝 Text Elements**: Add text anywhere on the board with formatting
-- **🖼️ Image Support**: Paste or drag-and-drop images onto the whiteboard
-- **🔧 Element Manipulation**: Move, resize, and delete elements easily
-- **↩️ Undo/Redo**: Full undo/redo support for all actions
-- **💾 Auto-Save**: Automatically saves your work as you edit
-- **📤 Export Options**: Export whiteboard to image or PDF format
-- **🔄 State Persistence**: Automatically loads your last saved whiteboard on open
 
 ### 🤖 AI Assistant (Bella) - Intelligent Help
 - **💬 Multi-Model Support**: Switch between LongCat and Gemini models
@@ -139,8 +129,9 @@ Pen2PDF Suite is a modern web application that offers six powerful productivity 
 ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 ![Mongoose](https://img.shields.io/badge/Mongoose-880000.svg?style=for-the-badge&logo=mongoose&logoColor=white)
 
-### AI & ML
+### AI
 ![Google Gemini](https://img.shields.io/badge/Google%20Gemini-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![LongCat](https://img.shields.io/badge/LongCat-FF6B6B?style=for-the-badge&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjI0IiBoZWlnaHQ9IjI0Ij48cGF0aCBmaWxsPSIjZmZmIiBkPSJNMTIgMkM2LjQ4IDIgMiA2LjQ4IDIgMTJzNC40OCAxMCAxMCAxMCAxMC00LjQ4IDEwLTEwUzE3LjUyIDIgMTIgMnptMCAxOGMtNC40MSAwLTgtMy41OS04LThzMy41OS0)
 
 ### Tools & Libraries
 ![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
@@ -148,6 +139,10 @@ Pen2PDF Suite is a modern web application that offers six powerful productivity 
 ![html2pdf.js](https://img.shields.io/badge/html2pdf.js-FF6B6B?style=for-the-badge&logo=javascript&logoColor=white)
 ![Papa Parse](https://img.shields.io/badge/Papa_Parse-FF9900?style=for-the-badge&logo=javascript&logoColor=white)
 ![XLSX](https://img.shields.io/badge/XLSX-217346?style=for-the-badge&logo=microsoft-excel&logoColor=white)
+![KaTeX](https://img.shields.io/badge/KaTeX-008080?style=for-the-badge&logo=latex&logoColor=white)
+![Fabric.js](https://img.shields.io/badge/Fabric.js-FF6B6B?style=for-the-badge&logo=javascript&logoColor=white)
+![docx](https://img.shields.io/badge/docx-2B579A?style=for-the-badge&logo=microsoft-word&logoColor=white)
+![CORS](https://img.shields.io/badge/CORS-000000?style=for-the-badge&logo=javascript&logoColor=white)
 
 ### DevOps & Development Tools
 ![ESLint](https://img.shields.io/badge/ESLint-4B3263?style=for-the-badge&logo=eslint&logoColor=white)
@@ -203,7 +198,6 @@ The application will automatically create the following databases:
 - `todolist` - For todo management data
 - `timetable` - For timetable and schedule data  
 - `notes` - For notes and study materials
-- `whiteboard` - For whiteboard state and elements
 - `chat` - For AI assistant chat history
 
 ### 5. Environment Setup
@@ -287,22 +281,6 @@ Subject Name, Teacher Name, Class Number, Class Type, Timings, Day
 5. **🔍 Browse Library**: Access and search through your saved notes collection
 6. **📋 Blank Notes**: Create notes from scratch without file upload
 
-#### LaTeX Formula Support
-Notes support LaTeX mathematical notation for beautiful formula rendering in PDF exports:
-- **Inline math**: Use `$formula$` for formulas within text
-- **Display math**: Use `$$formula$$` for standalone equations
-- **AI-generated notes automatically include properly formatted LaTeX**
-- See [LATEX_GUIDE.md](LATEX_GUIDE.md) for comprehensive LaTeX usage guide
-### 🎨 Whiteboard Usage
-
-1. **🖌️ Drawing Tools**: Select pen tool, choose color and stroke width
-2. **📝 Add Text**: Click text tool, then click anywhere on the board to add text
-3. **🖼️ Add Images**: Paste from clipboard or drag and drop images onto the board
-4. **🔧 Manipulate Elements**: Click to select, then move, resize, or delete elements
-5. **↩️ Undo/Redo**: Use undo/redo buttons to navigate through your changes
-6. **💾 Save**: Whiteboard auto-saves; click save button to manually save
-7. **📤 Export**: Export to PNG image or PDF document
-8. **🔄 Load**: Your last saved whiteboard is automatically loaded when you open the tool
 
 ### 🤖 AI Assistant (Bella) Usage
 
@@ -320,13 +298,6 @@ Notes support LaTeX mathematical notation for beautiful formula rendering in PDF
 7. **📝 Rich Formatting**: AI responses render with markdown, code blocks, and LaTeX math
 8. **💾 Conversation History**: Your chat is automatically saved and loaded on next visit
 9. **🔄 Switch Models**: Change models anytime to suit your needs
-
-For detailed information about chat context and formatting, see [CHAT_CONTEXT_GUIDE.md](./CHAT_CONTEXT_GUIDE.md)
-
-
-4. **💾 Save to Library**: Store notes in your personal notes library
-5. **🔍 Browse Library**: Access and search through your saved notes collection
-6. **📋 Blank Notes**: Create notes from scratch without file upload
 
 ### 🎯 Navigation
 
@@ -358,9 +329,6 @@ Pen2PDF/
 │       ├── 📁 TodoList/      # Task management
 │       │   ├── TodoList.jsx
 │       │   └── TodoList.css
-│       ├── 📁 Whiteboard/    # Digital whiteboard
-│       │   ├── Whiteboard.jsx
-│       │   └── Whiteboard.css
 │       ├── 📁 AIAssistant/   # AI chat assistant
 │       │   ├── AIAssistant.jsx
 │       │   └── AIAssistant.css
@@ -401,6 +369,12 @@ Pen2PDF/
 ├── 📄 eslint.config.js      # ESLint configuration
 └── 📄 index.html            # HTML template
 ```
+
+## 📦 Submodules
+
+This project currently does not use any Git submodules. All dependencies are managed through npm package managers and are listed in the respective `package.json` files.
+
+If you're looking to extend Pen2PDF with additional modules, please refer to our [Contributing Guidelines](CONTRIBUTING.md) for best practices on project architecture and integration.
 
 ## 🤝 Contributing
 
@@ -466,8 +440,4 @@ This project follows the Contributor Covenant Code of Conduct. Please read our [
 
 ---
 
-<div align="center">
-
-**Made with ❤️ by [H0NEYP0T-466](https://github.com/H0NEYP0T-466)**
-
-</div>
+<p align="center">Made with ❤️ by H0NEYP0T-466</p>
