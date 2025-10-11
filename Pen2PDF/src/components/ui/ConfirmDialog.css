@@ -1,0 +1,80 @@
+/* Minimal dark theme dialog, main color #111, no fancy hover interactions */
+
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.dialog-content {
+  background: #111;
+  color: #e5e7eb;
+  border: 1px solid #1f1f1f;
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 320px;
+  max-width: 520px;
+}
+
+.dialog-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #fafafa;
+}
+
+.dialog-message {
+  margin: 0 0 18px 0;
+  color: #9ca3af;
+  line-height: 1.55;
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #1a1a1a;
+}
+
+.dialog-actions .btn {
+  appearance: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Secondary (Cancel) */
+.dialog-actions .btn.outline {
+  background: #151515;
+  color: #d1d5db;
+  border-color: #2a2a2a;
+}
+.dialog-actions .btn.outline:hover {
+  background: #1b1b1b; /* simple state change, no animation */
+}
+
+/* Primary (Confirm) */
+.dialog-actions .btn.primary {
+  background: #e5e5e5; /* high contrast on #111 */
+  color: #111;
+  border-color: #e5e5e5;
+}
+.dialog-actions .btn.primary:hover {
+  background: #dcdcdc; /* simple state change, no animation */
+}
+
+/* Accessible focus */
+.dialog-actions .btn:focus-visible {
+  outline: 2px solid #d4d4d4;
+  outline-offset: 2px;
+}

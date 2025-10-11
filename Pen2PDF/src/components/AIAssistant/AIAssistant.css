@@ -1,3 +1,19 @@
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body.no-scroll {
+  overflow: hidden; 
+}
+
+
+#root,
+.ai-assistant-container {
+  height: 100vh; 
+}
+
 .ai-assistant-container {
   height: 100vh;
   display: flex;
@@ -5,6 +21,8 @@
   background: #0A0A0A;
   color: #FAFAFA;
   font-family: 'Inter', 'Segoe UI', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+  min-height: 0; 
+  overflow-x: hidden; 
 }
 
 .ai-header {
@@ -14,6 +32,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex: 0 0 auto;
 }
 
 .header-left {
@@ -57,10 +76,11 @@
 .ai-content {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: hidden; 
+  min-height: 0;   
 }
 
-/* Context Panel */
+
 .context-panel {
   width: 320px;
   background: #141414;
@@ -68,7 +88,8 @@
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow-y: auto;
+  overflow: hidden; 
+  min-height: 0;    
 }
 
 .context-panel h3 {
@@ -98,7 +119,9 @@
 
 .notes-list {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto;            
+  overscroll-behavior: contain; 
+  min-height: 0;
 }
 
 .empty-notes {
@@ -162,19 +185,24 @@
   text-align: center;
 }
 
-/* Chat Area */
+
 .chat-area {
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; 
+  min-height: 0;    
+  min-width: 0;     
 }
 
 .messages-container {
   flex: 1;
-  overflow-y: auto;
+  overflow-y: auto;             
+  overscroll-behavior: contain; 
+  overflow-x: hidden;           
   padding: 24px;
   background: #0A0A0A;
+  min-height: 0;
 }
 
 .welcome-message {
@@ -241,7 +269,7 @@
   font-size: 15px;
 }
 
-/* Markdown styling */
+
 .message-content h1,
 .message-content h2,
 .message-content h3,
@@ -340,7 +368,7 @@
   background: #141414;
 }
 
-/* LaTeX/KaTeX styling */
+
 .message-content .katex {
   font-size: 1.1em;
 }
@@ -355,7 +383,7 @@
   text-align: center;
 }
 
-/* Inline code and math spacing */
+
 .message-content p > code,
 .message-content p > .katex {
   margin: 0 2px;
@@ -398,7 +426,7 @@
   color: #B3B3B3;
 }
 
-/* Message Actions */
+
 .message-actions {
   display: flex;
   gap: 8px;
@@ -441,11 +469,11 @@
 }
 
 
-/* Input Area */
 .input-area {
   background: #141414;
   border-top: 1px solid #222;
   padding: 16px 24px;
+  flex: 0 0 auto; 
 }
 
 .input-controls {
@@ -539,6 +567,8 @@
   resize: none;
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   line-height: 1.5;
+  max-height: 40vh;   
+  overflow-y: auto;   
 }
 
 .message-input:focus {
@@ -570,33 +600,29 @@
   border-color: #333;
 }
 
-/* Scrollbar styling */
+
 .messages-container::-webkit-scrollbar,
-.notes-list::-webkit-scrollbar,
-.context-panel::-webkit-scrollbar {
+.notes-list::-webkit-scrollbar {
   width: 8px;
 }
 
 .messages-container::-webkit-scrollbar-track,
-.notes-list::-webkit-scrollbar-track,
-.context-panel::-webkit-scrollbar-track {
+.notes-list::-webkit-scrollbar-track {
   background: #141414;
 }
 
 .messages-container::-webkit-scrollbar-thumb,
-.notes-list::-webkit-scrollbar-thumb,
-.context-panel::-webkit-scrollbar-thumb {
+.notes-list::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 4px;
 }
 
 .messages-container::-webkit-scrollbar-thumb:hover,
-.notes-list::-webkit-scrollbar-thumb:hover,
-.context-panel::-webkit-scrollbar-thumb:hover {
+.notes-list::-webkit-scrollbar-thumb:hover {
   background: #444;
 }
 
-/* Mobile responsive */
+
 @media (max-width: 768px) {
   .ai-header {
     flex-direction: column;
@@ -618,6 +644,7 @@
     width: 280px;
     transform: translateX(-100%);
     transition: transform 0.3s ease;
+    overflow: hidden; 
   }
 
   .context-panel.visible {

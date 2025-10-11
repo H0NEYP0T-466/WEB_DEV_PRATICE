@@ -6,26 +6,25 @@ import markedKatex from "marked-katex-extension";
 import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import 'katex/dist/katex.min.css';
+import ConfirmDialog from '../ui/ConfirmDialog';
+import PromptDialog from '../ui/PromptDialog';
 import './AIAssistant.css';
+
+/* eslint-disable no-empty */
+
+
 
 marked.use(markedKatex({
   throwOnError: false,
   nonStandard: true
 }));
 
-/*
- * AI Assistant (Bella) Component
- * - CLI-style chat interface
- * - Model selection: LongCat and Gemini models
- * - File upload for Gemini models only
- * - Context panel to select notes as context
- * - Persistent chat history
- * - Markdown and LaTeX rendering support
- */
+
 
 function AIAssistant() {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const [messages, setMessages] = useState([]);
@@ -38,6 +37,10 @@ function AIAssistant() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedNotes, setSelectedNotes] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [clearChatDialogOpen, setClearChatDialogOpen] = useState(false);
+  const [saveNoteDialogOpen, setSaveNoteDialogOpen] = useState(false);
+  const [noteContentToSave, setNoteContentToSave] = useState('');
+  const [saveError, setSaveError] = useState('');
 
   const models = [
     { value: 'longcat-flash-chat', label: 'LongCat-Flash-Chat', supportsFiles: false },
@@ -48,18 +51,30 @@ function AIAssistant() {
 
   const currentModel = models.find(m => m.value === selectedModel);
 
-  // Load chat history and notes on mount
+  
+  useEffect(() => {
+    document.body.classList.add('no-scroll');
+    return () => {
+      document.body.classList.remove('no-scroll');
+    };
+  }, []);
+
+  
   useEffect(() => {
     loadChatHistory();
     loadNotes();
   }, []);
 
-  // Auto-scroll to bottom when new messages arrive
+  
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const el = messagesContainerRef.current;
+    if (!el) return;
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight;
+    });
+  }, [messages, loading]);
 
-  // Filter notes based on search query
+  
   useEffect(() => {
     if (searchQuery.trim()) {
       setFilteredNotes(
@@ -73,23 +88,19 @@ function AIAssistant() {
     }
   }, [searchQuery, notes]);
 
-  // Load chat history from backend (last 50 messages only)
+  
   const loadChatHistory = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/chat');
       if (response.data.success) {
-        // Backend returns only last 50 messages
         setMessages(response.data.data.messages || []);
         if (response.data.data.currentModel) {
           setSelectedModel(response.data.data.currentModel);
         }
       }
-    } catch (error) {
-      console.error('Error loading chat history:', error);
-    }
+    } catch {  }
   };
 
-  // Load notes from backend
   const loadNotes = async () => {
     try {
       const response = await axios.get('http://localhost:8000/api/notes');
@@ -97,12 +108,10 @@ function AIAssistant() {
         setNotes(response.data.data || []);
         setFilteredNotes(response.data.data || []);
       }
-    } catch (error) {
-      console.error('Error loading notes:', error);
-    }
+    } catch {  }
   };
 
-  // Toggle note selection
+  
   const toggleNoteSelection = (note) => {
     const isSelected = selectedNotes.find(n => n.noteId === note._id);
     if (isSelected) {
@@ -116,13 +125,13 @@ function AIAssistant() {
     }
   };
 
-  // Render markdown with LaTeX support
+  
   const renderMarkdown = (content) => {
     const html = marked(content);
     return { __html: html };
   };
 
-  // Handle file upload
+  
   const handleFileUpload = async (e) => {
     const files = Array.from(e.target.files);
     const newFiles = [];
@@ -147,12 +156,12 @@ function AIAssistant() {
     setUploadedFiles([...uploadedFiles, ...newFiles]);
   };
 
-  // Remove uploaded file
+  
   const removeFile = (index) => {
     setUploadedFiles(uploadedFiles.filter((_, i) => i !== index));
   };
 
-  // Send message
+  
   const sendMessage = async () => {
     if (!inputMessage.trim() && uploadedFiles.length === 0) return;
 
@@ -179,23 +188,17 @@ function AIAssistant() {
       });
 
       if (response.data.success) {
-        // Re-fetch to get the latest messages including the assistant's response
+        
         const chatResponse = await axios.get('http://localhost:8000/api/chat');
         if (chatResponse.data.success) {
           let updatedMessages = chatResponse.data.data.messages || [];
-          
-          // Maintain only last 50 messages in memory
           if (updatedMessages.length > 50) {
             updatedMessages = updatedMessages.slice(-50);
           }
-          
           setMessages(updatedMessages);
         }
       }
-    } catch (error) {
-      console.error('Error sending message:', error);
-      // Add error message
-      setMessages([...messages, userMessage, {
+    } catch {      setMessages([...messages, userMessage, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: 'Sorry, I encountered an error processing your request. Please try again.',
@@ -207,7 +210,7 @@ function AIAssistant() {
     }
   };
 
-  // Handle Enter key to send message
+  
   const handleKeyPress = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -215,35 +218,39 @@ function AIAssistant() {
     }
   };
 
-  // Clear chat history
   const clearChat = async () => {
-    if (window.confirm('Are you sure you want to clear the chat history?')) {
-      try {
-        await axios.delete('http://localhost:8000/api/chat');
-        setMessages([]);
-      } catch (error) {
-        console.error('Error clearing chat:', error);
-      }
-    }
+    setClearChatDialogOpen(true);
   };
 
-  // Copy response to clipboard
+  const handleClearChatConfirm = async () => {
+    try {
+      await axios.delete('http://localhost:8000/api/chat');
+      setMessages([]);
+    } catch {
+    }
+
+    setClearChatDialogOpen(false);
+  };
+
+  const handleClearChatCancel = () => {
+    setClearChatDialogOpen(false);
+  };
+
   const copyResponse = async (content) => {
     try {
       await navigator.clipboard.writeText(content);
-    } catch (error) {
-      console.error('Error copying to clipboard:', error);
+    } catch {
     }
+
   };
 
-  // Export response to PDF (updated to use the same style as Notes.jsx)
   const exportToPDF = async (content, messageId) => {
     try {
       const html = marked(content);
       const element = document.createElement('div');
       element.className = 'printable-light pdf-page';
 
-      // Get KaTeX CSS from the stylesheet
+      
       const katexCSS = Array.from(document.styleSheets)
         .filter(sheet => {
           try {
@@ -263,232 +270,82 @@ function AIAssistant() {
 
       element.innerHTML = `
         <style>
-          /* KaTeX styles for math rendering */
           ${katexCSS}
-          
-          /* Print-safe CSS for PDF generation */
-          @page {
-            margin: 12mm;
-          }
-          
-          .pdf-page {
-            padding: 8mm;
-            position: relative;
-          }
-          
-          /* Prevent word breaking and control text flow */
+          @page { margin: 12mm; }
+          .pdf-page { padding: 8mm; position: relative; }
           body, p, li, h1, h2, h3, h4, h5, h6 {
-            word-break: normal;
-            overflow-wrap: normal;
-            word-wrap: normal;
-            hyphens: none;
-            -webkit-hyphens: none;
-            -moz-hyphens: none;
-            -ms-hyphens: none;
-            text-align: justify;
-            text-justify: inter-word;
+            word-break: normal; overflow-wrap: normal; hyphens: none; text-align: justify; text-justify: inter-word;
           }
-          
-          /* Stronger word protection for all text elements */
-          * {
-            word-break: normal !important;
-            overflow-wrap: normal !important;
-            word-wrap: normal !important;
-            hyphens: none !important;
-            -webkit-hyphens: none !important;
-            -moz-hyphens: none !important;
-            -ms-hyphens: none !important;
-          }
-          
-          /* Prevent orphaned elements and bad page breaks */
-          h1, h2, h3, h4, h5, h6, img, table, pre, blockquote {
-            break-inside: avoid;
-            page-break-inside: avoid;
-            -webkit-column-break-inside: avoid;
-          }
-          
-          /* Keep headings with following content */
-          h1, h2, h3, h4, h5, h6 {
-            break-after: avoid;
-            page-break-after: avoid;
-            -webkit-column-break-after: avoid;
-          }
-          
-          /* Math equation page break protection */
-          .katex, .katex-display {
-            break-inside: avoid;
-            page-break-inside: avoid;
-            -webkit-column-break-inside: avoid;
-          }
-          
-          /* Block math equations get extra spacing and centering */
-          .katex-display {
-            margin: 1em 0;
-            text-align: center;
-          }
-          
-          /* Inline math stays with surrounding text */
-          p:has(.katex) {
-            break-inside: avoid;
-            page-break-inside: avoid;
-            -webkit-column-break-inside: avoid;
-          }
-          
-          /* Orphan and widow control */
-          p {
-            orphans: 2;
-            widows: 2;
-          }
-          
-          .printable-light {
-            max-width: none;
-            padding: 0;
-            color: #333;
-            background: #ffffff;
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            position: relative;
-          }
-          
-          .printable-light h1, .printable-light h2, .printable-light h3 {
-            color: #333;
-            margin: 0 0 12px 0;
-            line-height: 1.25;
-            font-weight: 700;
-          }
-          
-          .printable-light p, .printable-light li {
-            font-size: 12.5pt;
-            line-height: 1.6;
-            color: #333;
-          }
-          
-          /* Watermark styles */
-          .watermark {
-            position: fixed;
-            bottom: 16pt;
-            right: 16pt;
-            opacity: 0.2;
-            font-size: 14pt;
-            color: #000;
-            pointer-events: none;
-            z-index: 1000;
-            font-family: 'Arial', sans-serif;
-          }
+          * { word-break: normal !important; overflow-wrap: normal !important; hyphens: none !important; }
+          h1, h2, h3, h4, h5, h6, img, table, pre, blockquote { break-inside: avoid; page-break-inside: avoid; }
+          h1, h2, h3, h4, h5, h6 { break-after: avoid; page-break-after: avoid; }
+          .katex, .katex-display { break-inside: avoid; page-break-inside: avoid; }
+          .katex-display { margin: 1em 0; text-align: center; }
+          p:has(.katex) { break-inside: avoid; }
+          p { orphans: 2; widows: 2; }
+          .printable-light { max-width: none; padding: 0; color: #333; background: #fff; font-family: 'Arial', sans-serif; line-height: 1.6; }
+          .printable-light h1, .printable-light h2, .printable-light h3 { color: #333; margin: 0 0 12px 0; line-height: 1.25; font-weight: 700; }
+          .printable-light p, .printable-light li { font-size: 12.5pt; line-height: 1.6; color: #333; }
+          .watermark { position: fixed; bottom: 16pt; right: 16pt; opacity: 0.2; font-size: 14pt; color: #000; pointer-events: none; z-index: 1000; font-family: 'Arial', sans-serif; }
         </style>
         <div class="watermark">~honeypot</div>
         ${html}
       `;
 
       const opt = {
-        margin: [34, 34, 34, 34], // 12mm converted to pt (12mm ≈ 34pt)
+        margin: [34, 34, 34, 34],
         filename: `ai-response-${messageId}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
         jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
-        pagebreak: { 
-          mode: ["css", "legacy"], 
-          avoid: ["h1", "h2", "h3", "img", "table", "pre", "blockquote", ".katex", ".katex-display"]
-        }
+        pagebreak: { mode: ["css", "legacy"], avoid: ["h1", "h2", "h3", "img", "table", "pre", "blockquote", ".katex", ".katex-display"] }
       };
 
       await html2pdf().set(opt).from(element).save();
-    } catch (error) {
-      console.error('Error exporting to PDF:', error);
-    }
+    } catch {  }
   };
 
-  // Export response to Word (DOCX)
   const exportToWord = async (content, messageId) => {
     try {
-      // Parse markdown and create DOCX paragraphs
       const lines = content.split('\n');
       const children = [];
-      
       for (const line of lines) {
         if (line.trim() === '') {
           children.push(new Paragraph({ text: '' }));
           continue;
         }
-        
-        // Handle headings
         if (line.startsWith('# ')) {
-          children.push(new Paragraph({
-            text: line.substring(2),
-            heading: HeadingLevel.HEADING_1,
-            spacing: { before: 240, after: 120 }
-          }));
+          children.push(new Paragraph({ text: line.substring(2), heading: HeadingLevel.HEADING_1, spacing: { before: 240, after: 120 } }));
         } else if (line.startsWith('## ')) {
-          children.push(new Paragraph({
-            text: line.substring(3),
-            heading: HeadingLevel.HEADING_2,
-            spacing: { before: 200, after: 100 }
-          }));
+          children.push(new Paragraph({ text: line.substring(3), heading: HeadingLevel.HEADING_2, spacing: { before: 200, after: 100 } }));
         } else if (line.startsWith('### ')) {
-          children.push(new Paragraph({
-            text: line.substring(4),
-            heading: HeadingLevel.HEADING_3,
-            spacing: { before: 160, after: 80 }
-          }));
+          children.push(new Paragraph({ text: line.substring(4), heading: HeadingLevel.HEADING_3, spacing: { before: 160, after: 80 } }));
         } else if (line.startsWith('- ') || line.startsWith('* ')) {
-          children.push(new Paragraph({
-            text: line.substring(2),
-            bullet: { level: 0 },
-            spacing: { before: 60, after: 60 }
-          }));
+          children.push(new Paragraph({ text: line.substring(2), bullet: { level: 0 }, spacing: { before: 60, after: 60 } }));
         } else if (/^\d+\.\s/.test(line)) {
           const text = line.replace(/^\d+\.\s/, '');
-          children.push(new Paragraph({
-            text: text,
-            numbering: { reference: 'default-numbering', level: 0 },
-            spacing: { before: 60, after: 60 }
-          }));
+          children.push(new Paragraph({ text, numbering: { reference: 'default-numbering', level: 0 }, spacing: { before: 60, after: 60 } }));
         } else {
-          // Regular paragraph - handle basic markdown formatting
           const runs = [];
           const parts = line.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/g);
-          
           for (const part of parts) {
             if (part.startsWith('**') && part.endsWith('**')) {
               runs.push(new TextRun({ text: part.slice(2, -2), bold: true }));
             } else if (part.startsWith('*') && part.endsWith('*')) {
               runs.push(new TextRun({ text: part.slice(1, -1), italics: true }));
             } else if (part.startsWith('`') && part.endsWith('`')) {
-              runs.push(new TextRun({ 
-                text: part.slice(1, -1), 
-                font: 'Courier New',
-                shading: { fill: 'E5E7EB' }
-              }));
+              runs.push(new TextRun({ text: part.slice(1, -1), font: 'Courier New', shading: { fill: 'E5E7EB' } }));
             } else if (part) {
               runs.push(new TextRun(part));
             }
           }
-          
-          children.push(new Paragraph({
-            children: runs.length > 0 ? runs : [new TextRun(line)],
-            spacing: { before: 100, after: 100 }
-          }));
+          children.push(new Paragraph({ children: runs.length > 0 ? runs : [new TextRun(line)], spacing: { before: 100, after: 100 } }));
         }
       }
-      
       const doc = new Document({
-        sections: [{
-          properties: {},
-          children: children
-        }],
-        numbering: {
-          config: [{
-            reference: 'default-numbering',
-            levels: [{
-              level: 0,
-              format: 'decimal',
-              text: '%1.',
-              alignment: AlignmentType.START
-            }]
-          }]
-        }
+        sections: [{ properties: {}, children }],
+        numbering: { config: [{ reference: 'default-numbering', levels: [{ level: 0, format: 'decimal', text: '%1.', alignment: AlignmentType.START }] }] }
       });
-      
       const blob = await Packer.toBlob(doc);
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -498,66 +355,63 @@ function AIAssistant() {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
-    } catch (error) {
-      console.error('Error exporting to Word:', error);
-    }
+    } catch {  }
   };
 
   const saveToNotes = async (content) => {
+    setNoteContentToSave(content);
+    setSaveNoteDialogOpen(true);
+  };
+
+  const handleSaveNoteConfirm = async (title) => {
+    if (!title || !title.trim()) {
+      setSaveNoteDialogOpen(false);
+      return;
+    }
+
     try {
-      const title = prompt('Enter a title for this note:');
-      if (!title) return;
-      
       const noteData = {
-        title: title,
-        generatedNotes: content,
+        title: title.trim(),
+        generatedNotes: noteContentToSave,
         modelUsed: 'AI Assistant',
         originalFiles: []
       };
-      
       const response = await axios.post('http://localhost:8000/api/notes', noteData);
-      
       if (response.data.success) {
-        alert('Note saved successfully!');
-        // Reload notes in case context panel is open
         loadNotes();
+        setSaveError('');
+      } else {
+        setSaveError('Failed to save to notes');
       }
-    } catch (error) {
-      console.error('Error saving to notes:', error);
-      alert('Failed to save to notes');
+    } catch {
+      setSaveError('Failed to save to notes');
     }
+    setSaveNoteDialogOpen(false);
+    setNoteContentToSave('');
+  };
+
+  const handleSaveNoteCancel = () => {
+    setSaveNoteDialogOpen(false);
+    setNoteContentToSave('');
+    setSaveError('');
   };
 
   return (
     <div className="ai-assistant-container">
-      {/* Header */}
       <div className="ai-header">
         <div className="header-left">
-          <button
-            className="back-btn"
-            onClick={() => navigate('/')}
-            title="Back to main page"
-          >
-            ←
-          </button>
+          <button className="back-btn" onClick={() => navigate('/')} title="Back to main page">←</button>
           <h1>~Isabella</h1>
         </div>
         <div className="header-right">
-          <button
-            className="context-toggle-btn"
-            onClick={() => setShowContextPanel(!showContextPanel)}
-          >
+          <button className="context-toggle-btn" onClick={() => setShowContextPanel(!showContextPanel)}>
             {showContextPanel ? 'Hide' : 'Show'} Context Panel
           </button>
-          <button className="clear-btn" onClick={clearChat}>
-            Clear Chat
-          </button>
+          <button className="clear-btn" onClick={clearChat}>Clear Chat</button>
         </div>
       </div>
 
       <div className="ai-content">
-        {/* Context Panel */}
         {showContextPanel && (
           <div className="context-panel">
             <h3>Notes Context</h3>
@@ -598,9 +452,8 @@ function AIAssistant() {
           </div>
         )}
 
-        {/* Chat Area */}
         <div className="chat-area">
-          <div className="messages-container">
+          <div className="messages-container" ref={messagesContainerRef}>
             {messages.length === 0 ? (
               <div className="welcome-message">
                 <h2>👋 Hello! I'm Isabella</h2>
@@ -611,20 +464,14 @@ function AIAssistant() {
               messages.map((msg) => (
                 <div key={msg.id} className={`message ${msg.role}`}>
                   <div className="message-header">
-                    <span className="message-role">
-                      {msg.role === 'user' ? '> You' : '> Bella'}
-                    </span>
-                    {msg.model && (
-                      <span className="message-model">({msg.model})</span>
-                    )}
+                    <span className="message-role">{msg.role === 'user' ? '> You' : '> Bella'}</span>
+                    {msg.model && <span className="message-model">({msg.model})</span>}
                   </div>
                   <div className="message-content" dangerouslySetInnerHTML={renderMarkdown(msg.content)} />
                   {msg.attachments && msg.attachments.length > 0 && (
                     <div className="message-attachments">
                       {msg.attachments.map((att, i) => (
-                        <span key={i} className="attachment-tag">
-                          📎 {att.fileName}
-                        </span>
+                        <span key={i} className="attachment-tag">📎 {att.fileName}</span>
                       ))}
                     </div>
                   )}
@@ -635,34 +482,10 @@ function AIAssistant() {
                   )}
                   {msg.role === 'assistant' && (
                     <div className="message-actions">
-                      <button 
-                        className="action-btn" 
-                        onClick={() => copyResponse(msg.content)}
-                        title="Copy response to clipboard"
-                      >
-                        📋 Copy Response
-                      </button>
-                      <button 
-                        className="action-btn" 
-                        onClick={() => exportToPDF(msg.content, msg.id)}
-                        title="Export response to PDF"
-                      >
-                        📄 Export to PDF
-                      </button>
-                      <button 
-                        className="action-btn" 
-                        onClick={() => exportToWord(msg.content, msg.id)}
-                        title="Export response to Word"
-                      >
-                        📝 Export to Word
-                      </button>
-                      <button 
-                        className="action-btn" 
-                        onClick={() => saveToNotes(msg.content)}
-                        title="Save response to Notes"
-                      >
-                        💾 Save to Notes
-                      </button>
+                      <button className="action-btn" onClick={() => copyResponse(msg.content)} title="Copy response to clipboard">📋 Copy Response</button>
+                      <button className="action-btn" onClick={() => exportToPDF(msg.content, msg.id)} title="Export response to PDF">📄 Export to PDF</button>
+                      <button className="action-btn" onClick={() => exportToWord(msg.content, msg.id)} title="Export response to Word">📝 Export to Word</button>
+                      <button className="action-btn" onClick={() => saveToNotes(msg.content)} title="Save response to Notes">💾 Save to Notes</button>
                     </div>
                   )}
                 </div>
@@ -683,7 +506,6 @@ function AIAssistant() {
 
           {/* Input Area */}
           <div className="input-area">
-            {/* Model Selection and File Upload */}
             <div className="input-controls">
               <select
                 value={selectedModel}
@@ -691,9 +513,7 @@ function AIAssistant() {
                 className="model-select"
               >
                 {models.map(model => (
-                  <option key={model.value} value={model.value}>
-                    {model.label}
-                  </option>
+                  <option key={model.value} value={model.value}>{model.label}</option>
                 ))}
               </select>
 
@@ -714,7 +534,6 @@ function AIAssistant() {
               />
             </div>
 
-            {/* Uploaded Files */}
             {uploadedFiles.length > 0 && (
               <div className="uploaded-files">
                 {uploadedFiles.map((file, i) => (
@@ -726,7 +545,6 @@ function AIAssistant() {
               </div>
             )}
 
-            {/* Message Input */}
             <div className="message-input-wrapper">
               <textarea
                 value={inputMessage}
@@ -747,6 +565,43 @@ function AIAssistant() {
           </div>
         </div>
       </div>
+      <ConfirmDialog
+        open={clearChatDialogOpen}
+        title="Clear Chat History"
+        message="Are you sure you want to clear the chat history?"
+        confirmText="Clear"
+        cancelText="Cancel"
+        onConfirm={handleClearChatConfirm}
+        onCancel={handleClearChatCancel}
+      />
+
+      <PromptDialog
+        open={saveNoteDialogOpen}
+        title="Save to Notes"
+        message="Enter a title for this note:"
+        placeholder="Note title"
+        defaultValue=""
+        confirmText="Save"
+        cancelText="Cancel"
+        onConfirm={handleSaveNoteConfirm}
+        onCancel={handleSaveNoteCancel}
+      />
+
+      {saveError && (
+        <div className="error-toast" style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          background: '#ef4444',
+          color: 'white',
+          padding: '12px 16px',
+          borderRadius: '6px',
+          boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+          zIndex: 10001
+        }}>
+          {saveError}
+        </div>
+      )}
     </div>
   );
 }
