@@ -1,0 +1,154 @@
+name: "✨ Feature Request"
+description: "Propose an enhancement or new feature"
+labels: ["enhancement"]
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## ✨ Feature Request
+        
+        Thank you for suggesting a new feature! Please provide as much detail as possible to help us understand your proposal.
+
+  - type: textarea
+    id: problem-statement
+    attributes:
+      label: "❓ Problem Statement"
+      description: "Is your feature request related to a problem? Please describe."
+      placeholder: "I'm frustrated when... / It would be helpful to have..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: "💡 Proposed Solution"
+      description: "Describe the solution you'd like to see implemented."
+      placeholder: "A clear and concise description of what you want to happen..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "🔄 Alternatives Considered"
+      description: "Have you considered any alternative solutions or features?"
+      placeholder: "Describe any alternative solutions or features you've considered..."
+
+  - type: dropdown
+    id: project
+    attributes:
+      label: "📦 Target Project"
+      description: "Which project would this feature be for?"
+      options:
+        - NeuralMate
+        - DEV_LENS
+        - ChessVision (CHESS)
+        - GhibliVerse (Ideovent_Task)
+        - Pen2PDF
+        - PASTE_APP
+        - React Projects
+        - Backend Projects
+        - Repository/Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: "🏷️ Feature Type"
+      description: "What type of feature is this?"
+      options:
+        - New functionality
+        - Enhancement to existing feature
+        - UI/UX improvement
+        - Performance optimization
+        - Documentation
+        - Developer experience
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: "🎯 Scope & Requirements"
+      description: "What is in scope and what is out of scope for this feature?"
+      placeholder: |
+        **In Scope:**
+        - Feature A
+        - Feature B
+        
+        **Out of Scope:**
+        - Feature X
+        - Feature Y
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: "📖 Use Cases"
+      description: "Describe specific use cases where this feature would be beneficial."
+      placeholder: |
+        1. As a [user type], I want to [action] so that [benefit]
+        2. When [scenario], this feature would allow [outcome]
+
+  - type: textarea
+    id: implementation-ideas
+    attributes:
+      label: "🛠️ Implementation Ideas (Optional)"
+      description: "If you have ideas on how this could be implemented, share them here."
+      placeholder: "Technical approach, libraries to use, API changes, etc..."
+
+  - type: textarea
+    id: risks
+    attributes:
+      label: "⚠️ Potential Risks/Challenges"
+      description: "Are there any risks or challenges associated with this feature?"
+      placeholder: "Breaking changes, performance concerns, complexity, etc..."
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: "🔥 Priority"
+      description: "How important is this feature to you?"
+      options:
+        - Critical (Blocker for using the project)
+        - High (Significantly improves usability)
+        - Medium (Nice to have)
+        - Low (Minor enhancement)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: "📎 Additional Context"
+      description: "Add any other context, mockups, or examples about the feature request."
+      placeholder: "Screenshots, wireframes, links to similar implementations..."
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: "🤝 Contribution"
+      description: "Would you be willing to contribute to this feature?"
+      options:
+        - label: "I would like to implement this feature myself"
+          required: false
+        - label: "I can help with testing this feature"
+          required: false
+        - label: "I can help with documentation"
+          required: false
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "✅ Pre-submission Checklist"
+      description: "Please confirm the following:"
+      options:
+        - label: "I have searched for existing issues and this is not a duplicate"
+          required: true
+        - label: "I have provided all the required information above"
+          required: true
+        - label: "This feature aligns with the project goals"
+          required: false
