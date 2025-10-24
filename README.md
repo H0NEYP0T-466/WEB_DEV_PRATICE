@@ -43,6 +43,7 @@ Welcome to **WEB_DEV_PRATICE** - a comprehensive collection of web development p
 - [📂 Projects Overview](#-projects-overview)
 - [📦 Submodules](#-submodules)
 - [🛠 Tech Stack](#-tech-stack)
+- [📦 Dependencies & Packages](#-dependencies--packages)
 - [📂 Folder Structure](#-folder-structure)
 - [🤝 Contributing](#-contributing)
 - [📜 License](#-license)
