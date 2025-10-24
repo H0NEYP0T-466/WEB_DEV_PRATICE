@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 GitHub Discussions"
+    url: https://github.com/H0NEYP0T-466/WEB_DEV_PRATICE/discussions
+    about: "Ask questions and discuss ideas with the community"
+  
+  - name: "🛡️ Security Vulnerability"
+    url: https://github.com/H0NEYP0T-466/WEB_DEV_PRATICE/security/advisories/new
+    about: "Report security vulnerabilities privately (do not create a public issue)"
+  
+  - name: "📖 Documentation"
+    url: https://github.com/H0NEYP0T-466/WEB_DEV_PRATICE/blob/main/README.md
+    about: "Read the documentation for setup and usage instructions"
+  
+  - name: "❓ Questions & Support"
+    url: https://github.com/H0NEYP0T-466/WEB_DEV_PRATICE/discussions/categories/q-a
+    about: "Get help with using the projects in this repository"

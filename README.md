@@ -276,6 +276,165 @@ This repository includes several Git submodules that contain specialized applica
 - **HTTP Client**: Axios for API communications
 - **Form Handling**: React Hook Form for efficient form management
 
+## 📦 Dependencies & Packages
+
+This repository uses various dependencies across different projects. Below is a comprehensive list of all runtime and development dependencies detected from the project manifests.
+
+### Runtime Dependencies
+
+<details>
+<summary><b>Frontend Libraries (React & UI)</b></summary>
+
+[![React](https://img.shields.io/npm/v/react?style=for-the-badge&label=react&logo=react)](https://www.npmjs.com/package/react)
+[![React DOM](https://img.shields.io/npm/v/react-dom?style=for-the-badge&label=react-dom&logo=react)](https://www.npmjs.com/package/react-dom)
+[![React Router DOM](https://img.shields.io/npm/v/react-router-dom?style=for-the-badge&label=react-router-dom&logo=react-router)](https://www.npmjs.com/package/react-router-dom)
+[![Redux Toolkit](https://img.shields.io/npm/v/@reduxjs/toolkit?style=for-the-badge&label=@reduxjs/toolkit&logo=redux)](https://www.npmjs.com/package/@reduxjs/toolkit)
+[![React Redux](https://img.shields.io/npm/v/react-redux?style=for-the-badge&label=react-redux&logo=redux)](https://www.npmjs.com/package/react-redux)
+[![React Hook Form](https://img.shields.io/npm/v/react-hook-form?style=for-the-badge&label=react-hook-form)](https://www.npmjs.com/package/react-hook-form)
+
+- **react** (^19.1.0-19.1.1) - JavaScript library for building user interfaces
+- **react-dom** (^19.1.0-19.1.1) - React package for working with the DOM
+- **react-router-dom** (^7.7.1-7.9.1) - Declarative routing for React applications
+- **@reduxjs/toolkit** (^2.8.2) - Official Redux toolset for efficient Redux development
+- **react-redux** (^9.2.0) - Official React bindings for Redux
+- **react-hook-form** (^7.61.1) - Performant, flexible and extensible forms with easy-to-use validation
+
+</details>
+
+<details>
+<summary><b>Backend & Server</b></summary>
+
+[![Express](https://img.shields.io/npm/v/express?style=for-the-badge&label=express&logo=express)](https://www.npmjs.com/package/express)
+[![Mongoose](https://img.shields.io/npm/v/mongoose?style=for-the-badge&label=mongoose&logo=mongoose)](https://www.npmjs.com/package/mongoose)
+[![MongoDB](https://img.shields.io/npm/v/mongodb?style=for-the-badge&label=mongodb&logo=mongodb)](https://www.npmjs.com/package/mongodb)
+[![CORS](https://img.shields.io/npm/v/cors?style=for-the-badge&label=cors)](https://www.npmjs.com/package/cors)
+[![dotenv](https://img.shields.io/npm/v/dotenv?style=for-the-badge&label=dotenv)](https://www.npmjs.com/package/dotenv)
+
+- **express** (^5.1.0) - Fast, unopinionated, minimalist web framework for Node.js
+- **mongoose** (^8.17.0-8.18.1) - MongoDB object modeling tool designed to work in an asynchronous environment
+- **mongodb** (^6.18.0) - Official MongoDB driver for Node.js
+- **cors** (^2.8.5) - Cross-Origin Resource Sharing middleware for Express
+- **dotenv** (^17.2.1-17.2.2) - Load environment variables from .env file
+- **express-fileupload** (^1.5.2) - Simple express middleware for uploading files
+
+</details>
+
+<details>
+<summary><b>AI & ML Integration</b></summary>
+
+[![Google GenAI](https://img.shields.io/npm/v/@google/genai?style=for-the-badge&label=@google/genai&logo=google)](https://www.npmjs.com/package/@google/genai)
+
+- **@google/genai** (^1.19.0) - Google Generative AI SDK for Node.js
+
+</details>
+
+<details>
+<summary><b>Document Processing & Conversion</b></summary>
+
+[![jsPDF](https://img.shields.io/npm/v/jspdf?style=for-the-badge&label=jspdf)](https://www.npmjs.com/package/jspdf)
+[![docx](https://img.shields.io/npm/v/docx?style=for-the-badge&label=docx)](https://www.npmjs.com/package/docx)
+[![xlsx](https://img.shields.io/npm/v/xlsx?style=for-the-badge&label=xlsx)](https://www.npmjs.com/package/xlsx)
+[![html2pdf.js](https://img.shields.io/npm/v/html2pdf.js?style=for-the-badge&label=html2pdf.js)](https://www.npmjs.com/package/html2pdf.js)
+
+- **jspdf** (^3.0.3) - PDF document generation library
+- **docx** (^9.5.1) - Generate DOCX files with JavaScript
+- **xlsx** (^0.18.5) - Parser and writer for Excel spreadsheets
+- **html2pdf.js** (^0.12.0) - Convert HTML to PDF using jsPDF
+
+</details>
+
+<details>
+<summary><b>Markdown & LaTeX</b></summary>
+
+[![marked](https://img.shields.io/npm/v/marked?style=for-the-badge&label=marked)](https://www.npmjs.com/package/marked)
+[![markdown-it](https://img.shields.io/npm/v/markdown-it?style=for-the-badge&label=markdown-it)](https://www.npmjs.com/package/markdown-it)
+[![KaTeX](https://img.shields.io/npm/v/katex?style=for-the-badge&label=katex)](https://www.npmjs.com/package/katex)
+[![marked-katex-extension](https://img.shields.io/npm/v/marked-katex-extension?style=for-the-badge&label=marked-katex-extension)](https://www.npmjs.com/package/marked-katex-extension)
+
+- **marked** (^16.2.1) - Markdown parser and compiler
+- **markdown-it** (^14.1.0) - Markdown parser with pluggable syntax
+- **katex** (^0.16.23) - Fast math typesetting library for the web
+- **marked-katex-extension** (^5.1.5) - KaTeX extension for marked
+
+</details>
+
+<details>
+<summary><b>Utilities & Data Processing</b></summary>
+
+[![axios](https://img.shields.io/npm/v/axios?style=for-the-badge&label=axios)](https://www.npmjs.com/package/axios)
+[![fabric](https://img.shields.io/npm/v/fabric?style=for-the-badge&label=fabric)](https://www.npmjs.com/package/fabric)
+[![papaparse](https://img.shields.io/npm/v/papaparse?style=for-the-badge&label=papaparse)](https://www.npmjs.com/package/papaparse)
+
+- **axios** (^1.12.1) - Promise-based HTTP client for browser and Node.js
+- **fabric** (^6.7.1) - Canvas library with SVG-to-canvas parser
+- **papaparse** (^5.5.3) - Fast and powerful CSV parser for JavaScript
+
+</details>
+
+### Development Dependencies
+
+<details>
+<summary><b>Build Tools & Bundlers</b></summary>
+
+[![Vite](https://img.shields.io/npm/v/vite?style=for-the-badge&label=vite&logo=vite)](https://www.npmjs.com/package/vite)
+[![Vite Plugin React](https://img.shields.io/npm/v/@vitejs/plugin-react?style=for-the-badge&label=@vitejs/plugin-react)](https://www.npmjs.com/package/@vitejs/plugin-react)
+
+- **vite** (^7.0.4-7.1.2) - Next-generation frontend build tool
+- **@vitejs/plugin-react** (^4.6.0-5.0.0) - Official Vite plugin for React projects
+
+</details>
+
+<details>
+<summary><b>Code Quality & Linting</b></summary>
+
+[![ESLint](https://img.shields.io/npm/v/eslint?style=for-the-badge&label=eslint&logo=eslint)](https://www.npmjs.com/package/eslint)
+[![ESLint JS](https://img.shields.io/npm/v/@eslint/js?style=for-the-badge&label=@eslint/js)](https://www.npmjs.com/package/@eslint/js)
+
+- **eslint** (^9.30.1-9.33.0) - Pluggable JavaScript linter
+- **@eslint/js** (^9.30.1-9.33.0) - ESLint JavaScript language implementation
+- **eslint-plugin-react-hooks** (^5.2.0) - ESLint rules for React Hooks
+- **eslint-plugin-react-refresh** (^0.4.20) - ESLint plugin for React Fast Refresh
+- **globals** (^16.3.0) - Global identifiers from different JavaScript environments
+
+</details>
+
+<details>
+<summary><b>TypeScript & Type Definitions</b></summary>
+
+[![Types React](https://img.shields.io/npm/v/@types/react?style=for-the-badge&label=@types/react)](https://www.npmjs.com/package/@types/react)
+[![Types React DOM](https://img.shields.io/npm/v/@types/react-dom?style=for-the-badge&label=@types/react-dom)](https://www.npmjs.com/package/@types/react-dom)
+
+- **@types/react** (^19.1.8-19.1.10) - TypeScript definitions for React
+- **@types/react-dom** (^19.1.6-19.1.7) - TypeScript definitions for React DOM
+
+</details>
+
+<details>
+<summary><b>Testing & Development Utilities</b></summary>
+
+[![MongoDB Memory Server](https://img.shields.io/npm/v/mongodb-memory-server?style=for-the-badge&label=mongodb-memory-server)](https://www.npmjs.com/package/mongodb-memory-server)
+
+- **mongodb-memory-server** (^10.2.1) - In-memory MongoDB server for testing
+
+</details>
+
+### 📊 Dependency Summary
+
+| Category | Count |
+|----------|-------|
+| **Runtime Dependencies** | 30+ packages |
+| **Development Dependencies** | 15+ packages |
+| **Total Unique Packages** | 45+ across all projects |
+
+### 🔒 Security & Maintenance
+
+All dependencies are regularly monitored for security vulnerabilities using:
+- GitHub Dependabot
+- npm audit
+- Snyk vulnerability scanning
+
+**Note:** Version numbers represent the ranges used across different projects in this repository. Individual projects may use specific versions within these ranges.
+
 ## 📂 Folder Structure
 
 ```
