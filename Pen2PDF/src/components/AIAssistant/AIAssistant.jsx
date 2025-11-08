@@ -10,7 +10,6 @@ import ConfirmDialog from '../ui/ConfirmDialog';
 import PromptDialog from '../ui/PromptDialog';
 import './AIAssistant.css';
 
-/* eslint-disable no-empty */
 
 
 
@@ -41,13 +40,14 @@ function AIAssistant() {
   const [saveNoteDialogOpen, setSaveNoteDialogOpen] = useState(false);
   const [noteContentToSave, setNoteContentToSave] = useState('');
   const [saveError, setSaveError] = useState('');
+  const [sendWithoutHistory, setSendWithoutHistory] = useState(false);
   
-  // GitHub Models integration
+
   const [githubModels, setGithubModels] = useState([]);
   const [loadingModels, setLoadingModels] = useState(true);
   const [rateLimitError, setRateLimitError] = useState(null);
 
-  // Legacy models (kept for backward compatibility)
+
   const legacyModels = [
     { value: 'longcat-flash-chat', label: 'LongCat-Flash-Chat', supportsFiles: false, available: true, legacy: true },
     { value: 'longcat-flash-thinking', label: 'LongCat-Flash-Thinking', supportsFiles: false, available: true, legacy: true },
@@ -125,14 +125,13 @@ function AIAssistant() {
       setLoadingModels(true);
       const response = await axios.get('http://localhost:8000/api/github-models/models');
       if (response.data.success && response.data.models) {
-        // Map GitHub models to our format
+
         const models = response.data.models.map(m => ({
           id: m.id,
           value: m.id,
           label: m.displayName,
           provider: m.provider,
-          supportsFiles: m.filePolicy?.allowsFiles || false,
-          allowedMimeTypes: m.filePolicy?.allowedMimeTypes || [],
+          supportsFiles: false, 
           available: m.available,
           legacy: false
         }));
@@ -225,17 +224,22 @@ function AIAssistant() {
         // Use GitHub Models API
         const formData = new FormData();
         
-        // Build messages array
-        const chatMessages = [
-          ...messages.slice(-10).map(m => ({
-            role: m.role,
-            content: m.content
-          })),
-          {
-            role: 'user',
-            content: inputMessage
-          }
-        ];
+        // Build messages array - include history only if sendWithoutHistory is false
+        const chatMessages = sendWithoutHistory 
+          ? [{
+              role: 'user',
+              content: inputMessage
+            }]
+          : [
+              ...messages.slice(-10).map(m => ({
+                role: m.role,
+                content: m.content
+              })),
+              {
+                role: 'user',
+                content: inputMessage
+              }
+            ];
         
         formData.append('model', selectedModel);
         formData.append('messages', JSON.stringify(chatMessages));
@@ -243,21 +247,6 @@ function AIAssistant() {
         // Add context notes (same as legacy models)
         if (selectedNotes && selectedNotes.length > 0) {
           formData.append('contextNotes', JSON.stringify(selectedNotes));
-        }
-        
-        // Add file if present
-        if (currentFiles.length > 0 && currentModel?.supportsFiles) {
-          // For GitHub Models, we'll send the first file as a form upload
-          const file = currentFiles[0];
-          // We need to convert base64 back to file for the API
-          const byteString = atob(file.fileData);
-          const ab = new ArrayBuffer(byteString.length);
-          const ia = new Uint8Array(ab);
-          for (let i = 0; i < byteString.length; i++) {
-            ia[i] = byteString.charCodeAt(i);
-          }
-          const blob = new Blob([ab], { type: file.fileType });
-          formData.append('file', blob, file.fileName);
         }
         
         const response = await axios.post('http://localhost:8000/api/github-models/chat', formData, {
@@ -282,7 +271,8 @@ function AIAssistant() {
           message: inputMessage,
           model: selectedModel,
           attachments: currentFiles,
-          contextNotes: selectedNotes
+          contextNotes: selectedNotes,
+          sendWithoutHistory: sendWithoutHistory
         });
 
         if (response.data.success) {
@@ -397,9 +387,7 @@ function AIAssistant() {
           .printable-light { max-width: none; padding: 0; color: #333; background: #fff; font-family: 'Arial', sans-serif; line-height: 1.6; }
           .printable-light h1, .printable-light h2, .printable-light h3 { color: #333; margin: 0 0 12px 0; line-height: 1.25; font-weight: 700; }
           .printable-light p, .printable-light li { font-size: 12.5pt; line-height: 1.6; color: #333; }
-          .watermark { position: fixed; bottom: 16pt; right: 16pt; opacity: 0.2; font-size: 14pt; color: #000; pointer-events: none; z-index: 1000; font-family: 'Arial', sans-serif; }
         </style>
-        <div class="watermark">~honeypot</div>
         ${html}
       `;
 
@@ -412,7 +400,28 @@ function AIAssistant() {
         pagebreak: { mode: ["css", "legacy"], avoid: ["h1", "h2", "h3", "img", "table", "pre", "blockquote", ".katex", ".katex-display"] }
       };
 
-      await html2pdf().set(opt).from(element).save();
+      // Generate PDF and add watermark using jsPDF text (same as Notes component)
+      const worker = html2pdf().set(opt).from(element).toPdf();
+      const pdf = await worker.get('pdf');
+
+      const watermarkText = "~honeypot";
+      const pageCount = pdf.internal.getNumberOfPages();
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(120, 120, 120);
+
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const textWidth = pdf.getTextWidth(watermarkText);
+        const x = pageWidth - textWidth - 6;
+        const y = pageHeight - 8;
+        pdf.text(watermarkText, x, y);
+      }
+
+      await worker.save();
     } catch {  }
   };
 
@@ -650,11 +659,28 @@ function AIAssistant() {
                 )}
               </select>
 
+              <label style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px', 
+                fontSize: '14px',
+                cursor: 'pointer',
+                userSelect: 'none'
+              }}>
+                <input
+                  type="checkbox"
+                  checked={sendWithoutHistory}
+                  onChange={(e) => setSendWithoutHistory(e.target.checked)}
+                  style={{ cursor: 'pointer' }}
+                />
+                Isolate Message
+              </label>
+
               <button
                 className="file-upload-btn"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={!currentModel?.supportsFiles}
-                title={!currentModel?.supportsFiles ? 'This model does not support file uploads' : 'Upload image files (PNG, JPEG, WebP, GIF)'}
+                title={!currentModel?.supportsFiles ? 'File uploads are only supported for Gemini 2.5 Pro and Gemini 2.5 Flash models' : 'Upload files (images and PDFs)'}
               >
                 📎 {uploadedFiles.length > 0 ? `${uploadedFiles.length} file(s)` : 'Upload'}
               </button>
@@ -663,7 +689,7 @@ function AIAssistant() {
                 type="file"
                 multiple
                 onChange={handleFileUpload}
-                accept={currentModel?.allowedMimeTypes?.join(',') || 'image/*'}
+                accept="application/pdf,image/*"
                 style={{ display: 'none' }}
               />
             </div>

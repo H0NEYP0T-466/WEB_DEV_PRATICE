@@ -6,6 +6,7 @@ import markedKatex from 'marked-katex-extension';
 import html2pdf from 'html2pdf.js';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } from 'docx';
 import 'katex/dist/katex.min.css';
+import SuccessNotification from '../ui/SuccessNotification';
 import './Notes.css';
 
 marked.use(markedKatex({
@@ -26,8 +27,16 @@ function Notes() {
   const [replaceWith, setReplaceWith] = useState('');
   const [fileName, setFileName] = useState('study-notes');
   const [modelUsed, setModelUsed] = useState('');
+  const [selectedModelForGeneration, setSelectedModelForGeneration] = useState('gemini-2.5-pro');
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
 
   const textareaRef = useRef(null);
+
+  // Available models for notes generation
+  const availableModels = [
+    { value: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro' },
+    { value: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash' },
+  ];
 
   const acceptMime = "image/*,.pdf,.ppt,.pptx,.txt,.md,.markdown";
 
@@ -142,6 +151,9 @@ function Notes() {
     files.forEach(({ file }) => {
       formData.append(`files`, file);
     });
+    
+    // Add selected model to the request
+    formData.append('preferredModel', selectedModelForGeneration);
 
     try {
       const response = await axios.post('http://localhost:8000/notesGenerate', formData, {
@@ -156,8 +168,14 @@ function Notes() {
       } else {
         setError(response.data.error || 'Failed to generate notes');
       }
-    } catch {
-      setError('Failed to generate notes. Please try again.');
+    } catch (err) {
+      // Check if error suggests trying a different model
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to generate notes. Please try again.';
+      if (errorMessage.includes('quota') || errorMessage.includes('rate limit') || errorMessage.includes('unavailable')) {
+        setError(errorMessage + ' Please select a different model and try again.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -172,8 +190,9 @@ function Notes() {
       formData.append(`files`, file);
     });
     
-    
+    // Add retry instruction and preferred model
     formData.append('retryInstruction', 'The user didn\'t like the previous result. Please make this better with more detailed and comprehensive notes.');
+    formData.append('preferredModel', selectedModelForGeneration);
 
     try {
       const response = await axios.post('http://localhost:8000/notesGenerate', formData, {
@@ -187,8 +206,13 @@ function Notes() {
       } else {
         setError(response.data.error || 'Failed to regenerate notes');
       }
-    } catch {
-      setError('Failed to regenerate notes. Please try again.');
+    } catch (err) {
+      const errorMessage = err.response?.data?.error || err.message || 'Failed to regenerate notes. Please try again.';
+      if (errorMessage.includes('quota') || errorMessage.includes('rate limit') || errorMessage.includes('unavailable')) {
+        setError(errorMessage + ' Please select a different model and try again.');
+      } else {
+        setError(errorMessage);
+      }
     } finally {
       setLoading(false);
     }
@@ -228,7 +252,6 @@ function Notes() {
       const element = document.createElement('div');
       element.className = 'printable-light pdf-page';
       
-      
       const katexCSS = Array.from(document.styleSheets)
         .filter(sheet => {
           try {
@@ -248,20 +271,9 @@ function Notes() {
       
       element.innerHTML = `
         <style>
-          /* KaTeX styles for math rendering */
           ${katexCSS}
-          
-          /* Print-safe CSS for PDF generation */
-          @page {
-            margin: 12mm;
-          }
-          
-          .pdf-page {
-            padding: 8mm;
-            position: relative;
-          }
-          
-          /* Prevent word breaking and control text flow */
+          @page { margin: 12mm; }
+          .pdf-page { padding: 8mm; position: relative; }
           body, p, li, h1, h2, h3, h4, h5, h6 {
             word-break: normal;
             overflow-wrap: normal;
@@ -273,8 +285,6 @@ function Notes() {
             text-align: justify;
             text-justify: inter-word;
           }
-          
-          /* Stronger word protection for all text elements */
           * {
             word-break: normal !important;
             overflow-wrap: normal !important;
@@ -284,47 +294,28 @@ function Notes() {
             -moz-hyphens: none !important;
             -ms-hyphens: none !important;
           }
-          
-          /* Prevent orphaned elements and bad page breaks */
           h1, h2, h3, h4, h5, h6, img, table, pre, blockquote {
             break-inside: avoid;
             page-break-inside: avoid;
             -webkit-column-break-inside: avoid;
           }
-          
-          /* Keep headings with following content */
           h1, h2, h3, h4, h5, h6 {
             break-after: avoid;
             page-break-after: avoid;
             -webkit-column-break-after: avoid;
           }
-          
-          /* Math equation page break protection */
           .katex, .katex-display {
             break-inside: avoid;
             page-break-inside: avoid;
             -webkit-column-break-inside: avoid;
           }
-          
-          /* Block math equations get extra spacing and centering */
-          .katex-display {
-            margin: 1em 0;
-            text-align: center;
-          }
-          
-          /* Inline math stays with surrounding text */
+          .katex-display { margin: 1em 0; text-align: center; }
           p:has(.katex) {
             break-inside: avoid;
             page-break-inside: avoid;
             -webkit-column-break-inside: avoid;
           }
-          
-          /* Orphan and widow control */
-          p {
-            orphans: 2;
-            widows: 2;
-          }
-          
+          p { orphans: 2; widows: 2; }
           .printable-light {
             max-width: none;
             padding: 0;
@@ -334,39 +325,23 @@ function Notes() {
             line-height: 1.6;
             position: relative;
           }
-          
           .printable-light h1, .printable-light h2, .printable-light h3 {
             color: #333;
             margin: 0 0 12px 0;
             line-height: 1.25;
             font-weight: 700;
           }
-          
           .printable-light p, .printable-light li {
             font-size: 12.5pt;
             line-height: 1.6;
             color: #333;
           }
-          
-          /* Watermark styles */
-          .watermark {
-            position: fixed;
-            bottom: 16pt;
-            right: 16pt;
-            opacity: 0.2;
-            font-size: 14pt;
-            color: #000;
-            pointer-events: none;
-            z-index: 1000;
-            font-family: 'Arial', sans-serif;
-          }
         </style>
-        <div class="watermark">~honeypot</div>
         ${html}
       `;
 
       const opt = {
-        margin: [34, 34, 34, 34], 
+        margin: [34, 34, 34, 34],
         filename: `${fileName}.pdf`,
         image: { type: 'jpeg', quality: 0.98 },
         html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
@@ -377,7 +352,32 @@ function Notes() {
         }
       };
 
-      await html2pdf().set(opt).from(element).save();
+
+      const worker = html2pdf().set(opt).from(element).toPdf();
+      const pdf = await worker.get('pdf');
+
+      const [top, right, bottom, left] = Array.isArray(opt.margin)
+        ? opt.margin
+        : [opt.margin, opt.margin, opt.margin, opt.margin];
+
+      const watermarkText = "~honeypot";
+      const pageCount = pdf.internal.getNumberOfPages();
+
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(120, 120, 120);
+
+      for (let i = 1; i <= pageCount; i++) {
+        pdf.setPage(i);
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+        const textWidth = pdf.getTextWidth(watermarkText);
+        const x = pageWidth - textWidth - 6;
+        const y = pageHeight - 8;
+        pdf.text(watermarkText, x, y);
+      }
+
+      await worker.save();
     } catch {
       setError('Failed to generate PDF.');
     }
@@ -517,6 +517,7 @@ function Notes() {
 
       if (response.data.success) {
         setError('');
+        setShowSuccessNotification(true);
       } else {
         setError('Failed to save notes');
       }
@@ -595,6 +596,29 @@ function Notes() {
               </div>
             </div>
           )}
+
+          {/* Model Selector */}
+          <div className="model-selector-section">
+            <label htmlFor="model-select" className="model-selector-label">
+              Select AI Model for Notes Generation:
+            </label>
+            <select
+              id="model-select"
+              value={selectedModelForGeneration}
+              onChange={(e) => setSelectedModelForGeneration(e.target.value)}
+              className="model-selector"
+              disabled={loading}
+            >
+              {availableModels.map(model => (
+                <option key={model.value} value={model.value}>
+                  {model.label}
+                </option>
+              ))}
+            </select>
+            <p className="model-selector-hint">
+              If the selected model encounters an error, please try a different model.
+            </p>
+          </div>
 
           <div className="action-buttons">
             <button
@@ -724,6 +748,12 @@ function Notes() {
           </div>
         </div>
       )}
+      
+      <SuccessNotification
+        open={showSuccessNotification}
+        message="Notes saved to library successfully."
+        onClose={() => setShowSuccessNotification(false)}
+      />
     </div>
   );
 }

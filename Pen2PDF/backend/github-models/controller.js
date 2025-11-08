@@ -3,16 +3,12 @@
  */
 
 const { getModels } = require('./registry');
-const { isFileAllowed } = require('./filePolicy');
 const Chat = require('../model/chatData');
 require('dotenv').config();
 
 const GITHUB_MODELS_BASE = 'https://models.inference.ai.azure.com';
 
-/**
- * GET /api/github-models/models
- * Get available models
- */
+
 async function getModelsList(req, res) {
   try {
     const pat = process.env.githubModelsPAT;
@@ -59,10 +55,9 @@ async function chat(req, res) {
   try {
     let { model, messages, temperature, max_tokens, contextNotes } = req.body;
     
-    // Set default max_tokens to avoid exceeding model limits
-    // If not provided, use 2048 instead of letting API use its default (often 4096)
+
     if (max_tokens === undefined) {
-      max_tokens = 2048;
+      max_tokens = 4096;
       console.log('⚙️ [GITHUB MODELS] No max_tokens provided, using default:', max_tokens);
     }
     
@@ -126,53 +121,8 @@ async function chat(req, res) {
       return res.status(400).json({ error });
     }
 
-    // Handle file upload if present - validate BEFORE checking PAT
+    // Files are not supported for GitHub models - ignore any file uploads
     let processedMessages = [...messages];
-    if (req.files && req.files.file) {
-      const file = req.files.file;
-      
-      // Validate file against model policy
-      if (!isFileAllowed(model, file.mimetype)) {
-        const error = {
-          type: 'validation_error',
-          message: `File type ${file.mimetype} is not allowed for model ${model}`,
-          status: 400
-        };
-        
-        logChatEvent('error', 'validation_error', {
-          model,
-          file_type: file.mimetype,
-          error: error.message
-        });
-        
-        return res.status(400).json({ error });
-      }
-
-      // Convert image to base64 for the API
-      const base64 = Buffer.from(file.data).toString('base64');
-      const imageUrl = `data:${file.mimetype};base64,${base64}`;
-      
-      // Add image to the last user message
-      const lastUserMsgIndex = processedMessages.map(m => m.role).lastIndexOf('user');
-      
-      if (lastUserMsgIndex >= 0) {
-        processedMessages[lastUserMsgIndex] = {
-          role: 'user',
-          content: [
-            {
-              type: 'text',
-              text: processedMessages[lastUserMsgIndex].content
-            },
-            {
-              type: 'image_url',
-              image_url: {
-                url: imageUrl
-              }
-            }
-          ]
-        };
-      }
-    }
 
     // NOW check PAT (after file validation)
     const pat = process.env.githubModelsPAT;
@@ -250,12 +200,21 @@ async function chat(req, res) {
     ];
 
     // Call GitHub Models API
+    // Handle different parameter names for different models
     const requestBody = {
       model,
       messages: finalMessages,
-      ...(temperature !== undefined && { temperature }),
-      ...(max_tokens !== undefined && { max_tokens })
+      ...(temperature !== undefined && { temperature })
     };
+
+    // GPT-5 uses max_completion_tokens, all others use max_tokens
+    if (max_tokens !== undefined) {
+      if (model === 'gpt-5') {
+        requestBody.max_completion_tokens = max_tokens;
+      } else {
+        requestBody.max_tokens = max_tokens;
+      }
+    }
 
     console.log('\n' + '='.repeat(80));
     console.log('🚀 [GITHUB MODELS] Sending request to GitHub Models API');
@@ -279,12 +238,20 @@ async function chat(req, res) {
     console.log(JSON.stringify(requestBody, null, 2));
     console.log('─'.repeat(80));
     
+    // Build headers - add api-version for o1-mini
+    const headers = {
+      'Authorization': `Bearer ${pat}`,
+      'Content-Type': 'application/json'
+    };
+    
+    // o1-mini requires api version 2024-12-01-preview or later
+    if (model === 'o1-mini') {
+      headers['api-version'] = '2024-12-01-preview';
+    }
+    
     const response = await fetch(`${GITHUB_MODELS_BASE}/chat/completions`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${pat}`,
-        'Content-Type': 'application/json'
-      },
+      headers,
       body: JSON.stringify(requestBody)
     });
 
@@ -397,11 +364,7 @@ async function chat(req, res) {
         role: 'user',
         content: typeof userMessage === 'string' ? userMessage : '[multipart message]',
         timestamp: new Date(),
-        attachments: req.files && req.files.file ? [{
-          fileName: req.files.file.name,
-          fileType: req.files.file.mimetype,
-          fileData: Buffer.from(req.files.file.data).toString('base64')
-        }] : [],
+        attachments: [], // No file attachments for GitHub models
         contextNotes: contextNotes || []
       };
       chat.messages.push(userMsg);
