@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS HUD // Holographic Interface</title>
+  <style>
+    * {
+      margin:  0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow:  hidden;
+      background:  #000;
+      font-family: 'Courier New', monospace;
+    }
+    
+    #loading-screen {
+      position: fixed;
+      top:  0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2a 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    
+    #loading-screen.hidden {
+      display:  none;
+    }
+    
+    . loader {
+      width: 80px;
+      height: 80px;
+      border: 3px solid rgba(0, 255, 255, 0.1);
+      border-top-color: #00ffff;
+      border-radius: 50%;
+      animation:  spin 1s linear infinite;
+      margin-bottom: 30px;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    #loading-text {
+      color: #00ffff;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      max-width: 80%;
+    }
+    
+    #loading-details {
+      color: #888;
+      font-size: 11px;
+      margin-top: 15px;
+      text-align: center;
+    }
+    
+    #loading-progress {
+      width:  200px;
+      height: 4px;
+      background: rgba(0,255,255,0.2);
+      border-radius: 2px;
+      margin-top: 20px;
+      overflow: hidden;
+    }
+    
+    #loading-bar {
+      height:  100%;
+      background: #00ffff;
+      width: 0%;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px #00ffff;
+    }
+    
+    #error-box {
+      background:  rgba(255,0,0,0.1);
+      border: 1px solid #ff4444;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      display: none;
+      max-width: 400px;
+      text-align: center;
+    }
+    
+    #error-box h3 {
+      color: #ff4444;
+      margin-bottom: 10px;
+    }
+    
+    #error-box p {
+      color: #ccc;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+    
+    #retry-btn {
+      background:  #00ffff;
+      color: #000;
+      border: none;
+      padding: 10px 30px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 12px;
+      letter-spacing: 1px;
+      border-radius: 5px;
+    }
+    
+    #retry-btn:hover {
+      background:  #00cccc;
+    }
+    
+    #app {
+      position: fixed;
+      top:  0;
+      left:  0;
+      width: 100%;
+      height: 100%;
+    }
+    
+    canvas {
+      display: block;
+      width: 100% !important;
+      height: 100% !important;
+    }
+    
+    #overlay {
+      position:  fixed;
+      top: 0;
+      left: 0;
+      width:  100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 100;
+    }
+    
+    #status-bar {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      color: #00ffff;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-shadow: 0 0 10px #00ffff;
+      z-index: 101;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    . status-dot {
+      width:  8px;
+      height: 8px;
+      background: #00ff88;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #00ff88;
+      animation:  pulse-dot 1s infinite;
+    }
+    
+    . status-dot.warning {
+      background:  #ff6600;
+      box-shadow: 0 0 10px #ff6600;
+    }
+    
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.2); }
+    }
+    
+    . corner {
+      position: fixed;
+      width: 60px;
+      height: 60px;
+      border:  2px solid rgba(0, 255, 255, 0.3);
+      z-index: 101;
+    }
+    
+    .corner. tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+    . corner.tr { top: 10px; right: 10px; border-left:  none; border-bottom: none; }
+    .corner.bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+    .corner. br { bottom: 10px; right:  10px; border-left: none; border-top: none; }
+    
+    #instructions {
+      position:  fixed;
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: rgba(0, 255, 255, 0.6);
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      z-index: 101;
+    }
+    
+    #fps-counter {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      color: rgba(0, 255, 255, 0.5);
+      font-size:  10px;
+      z-index: 101;
+    }
+    
+    . vignette {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.7) 100%);
+      pointer-events: none;
+      z-index: 99;
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading Screen -->
+  <div id="loading-screen">
+    <div class="loader"></div>
+    <div id="loading-text">Initializing NEXUS Interface...</div>
+    <div id="loading-details">Please wait while components load</div>
+    <div id="loading-progress">
+      <div id="loading-bar"></div>
+    </div>
+    <div id="error-box">
+      <h3>⚠ Error</h3>
+      <p id="error-message"></p>
+      <button id="retry-btn" onclick="location.reload()">RETRY</button>
+    </div>
+  </div>
+
+  <!-- Main App -->
+  <div id="app"></div>
+  <div class="vignette"></div>
+  <div id="overlay">
+    <div id="status-bar">
+      <span class="status-dot warning"></span>
+      <span id="status-text">INITIALIZING</span>
+    </div>
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+    <div id="instructions">◈ PINCH TO SCALE ◈ MOVE TO DRAW ◈</div>
+    <div id="fps-counter">-- FPS</div>
+  </div>
+
+  <!-- Load p5.js first -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
+  
+  <script>
+    // ═══════════════════════════════════════════════════════════════════════
+    // LOADING MANAGEMENT
+    // ═══════════════════════════════════════════════════════════════════════
+    let loadingState = {
+      p5Ready: false,
+      ml5Ready: false,
+      modelReady: false,
+      cameraReady: false
+    };
+
+    function updateLoading(text, details, progress) {
+      document.getElementById('loading-text').textContent = text;
+      document.getElementById('loading-details').textContent = details || '';
+      document. getElementById('loading-bar').style.width = progress + '%';
+    }
+
+    function showError(title, message) {
+      document.getElementById('error-box').style.display = 'block';
+      document.getElementById('error-message').textContent = message;
+      document.querySelector('.loader').style.display = 'none';
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-screen').classList.add('hidden');
+    }
+
+    function updateStatus(text, isActive) {
+      document.getElementById('status-text').textContent = text;
+      const dot = document.querySelector('. status-dot');
+      if (isActive) {
+        dot.classList.remove('warning');
+      } else {
+        dot.classList.add('warning');
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // LOAD ML5.JS DYNAMICALLY
+    // ═══════════════════════════════════════════════════════════════════════
+    updateLoading('Loading ML5.js Library...', 'This may take a moment on slow connections', 10);
+
+    const ml5Script = document.createElement('script');
+    ml5Script.src = 'https://unpkg.com/ml5@1/dist/ml5.min.js';
+    
+    ml5Script. onload = function() {
+      console.log('✓ ML5.js loaded successfully');
+      loadingState.ml5Ready = true;
+      updateLoading('ML5.js Loaded! ', 'Initializing hand tracking model...', 30);
+      
+      // Small delay to ensure ml5 is fully initialized
+      setTimeout(initializeApp, 500);
+    };
+    
+    ml5Script.onerror = function() {
+      showError('Failed to Load', 'Could not load ML5.js library. Please check your internet connection and try again.');
+    };
+    
+    document.head.appendChild(ml5Script);
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // CONFIGURATION
+    // ═══════════════════════════════════════════════════════════════════════
+    const CONFIG = {
+      MAX_TRAIL_LENGTH: 30,
+      MAX_PARTICLES: 100,
+      NUM_DATA_POINTS: 12,
+      NUM_SACRED_RINGS: 4,
+      ORB_COUNT: 5
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // GLOBAL STATE
+    // ═══════════════════════════════════════════════════════════════════════
+    let video;
+    let handPose;
+    let hands = [];
+    let isModelReady = false;
+    let isVideoReady = false;
+
+    // Animation
+    let globalAngle = 0;
+    let frameNum = 0;
+    let lastFrameTime = 0;
+    let fps = 60;
+
+    // Systems
+    let trail = [];
+    let particles = [];
+    let energyOrbs = [];
+    let dataNumbers = [];
+    let shockwaves = [];
+    let portalRings = [];
+
+    // Interaction
+    let currentScale = 1.0;
+    let targetScale = 1.0;
+    let pinchDistance = 100;
+    let lastPinchDistance = 100;
+    let handVelocity = { x: 0, y: 0 };
+    let lastHandPos = { x: 0, y: 0 };
+    let gestureIntensity = 0;
+    let isHandPresent = false;
+    let handEntryTime = 0;
+
+    // Visual
+    let screenShake = { x: 0, y: 0 };
+    let colorShift = 0;
+
+    // Colors
+    const COLORS = {
+      cyan: [0, 255, 255],
+      magenta: [255, 0, 255],
+      electricBlue: [30, 144, 255],
+      gold: [255, 215, 0],
+      white: [255, 255, 255]
+    };
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INITIALIZE APP
+    // ═══════════════════════════════════════════════════════════════════════
+    function initializeApp() {
+      if (typeof ml5 === 'undefined') {
+        showError('ML5 Not Found', 'The ML5 library failed to initialize. Please refresh the page.');
+        return;
+      }
+
+      console.log('Initializing handPose model...');
+      updateLoading('Loading Hand Tracking Model...', 'Downloading neural network (~15MB)', 40);
+
+      try {
+        handPose = ml5.handPose({
+          flipped: true,
+          maxHands: 2
+        }, modelLoaded);
+      } catch (e) {
+        console.error('HandPose init error:', e);
+        showError('Model Error', 'Failed to initialize hand tracking:  ' + e.message);
+      }
+    }
+
+    function modelLoaded() {
+      console.log('✓ HandPose model loaded! ');
+      loadingState.modelReady = true;
+      isModelReady = true;
+      updateLoading('Hand Tracking Ready! ', 'Starting camera... ', 80);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // P5.JS FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════════════
+    function setup() {
+      console.log('p5.js setup starting...');
+      loadingState.p5Ready = true;
+
+      const canvas = createCanvas(windowWidth, windowHeight);
+      canvas.parent('app');
+
+      // Initialize data
+      initDataNumbers();
+      initEnergyOrbs();
+      initPortalRings();
+
+      // Request camera
+      updateLoading('Requesting Camera Access...', 'Please allow camera permission', 60);
+
+      video = createCapture(VIDEO, function(stream) {
+        console.log('✓ Camera access granted! ');
+        loadingState.cameraReady = true;
+        isVideoReady = true;
+        updateLoading('Camera Ready! ', 'Starting interface...', 90);
+
+        // Start hand detection once everything is ready
+        setTimeout(startDetection, 500);
+      });
+
+      video.size(width, height);
+      video.hide();
+
+      // Handle camera errors
+      video. elt.onerror = function(e) {
+        showError('Camera Error', 'Could not access camera.  Please ensure camera permissions are granted.');
+      };
+
+      pixelDensity(1);
+      frameRate(60);
+      lastFrameTime = millis();
+    }
+
+    function startDetection() {
+      if (handPose && video && isModelReady) {
+        console. log('Starting hand detection...');
+        handPose.detectStart(video, gotHands);
+        updateLoading('All Systems Ready! ', '', 100);
+
+        setTimeout(function() {
+          hideLoading();
+          updateStatus('NEXUS READY // AWAITING INPUT', false);
+        }, 500);
+      } else {
+        // Retry after a moment if not ready
+        console.log('Waiting for components... ', { handPose:  !!handPose, video: !!video, isModelReady });
+        setTimeout(startDetection, 500);
+      }
+    }
+
+    function windowResized() {
+      resizeCanvas(windowWidth, windowHeight);
+      if (video) {
+        video.size(width, height);
+      }
+    }
+
+    function gotHands(results) {
+      hands = results;
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // INITIALIZATION FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════════════
+    function initDataNumbers() {
+      dataNumbers = [];
+      for (let i = 0; i < CONFIG.NUM_DATA_POINTS; i++) {
+        dataNumbers.push({
+          value: generateDataString(),
+          updateRate: floor(random(20, 60))
+        });
+      }
+    }
+
+    function generateDataString() {
+      const types = [
+        () => '0x' + floor(random(0xFFFF)).toString(16).toUpperCase().padStart(4, '0'),
+        () => floor(random(1000, 9999)).toString(),
+        () => floor(random(255)).toString(2).padStart(8, '0')
+      ];
+      return random(types)();
+    }
+
+    function initEnergyOrbs() {
+      energyOrbs = [];
+      for (let i = 0; i < CONFIG. ORB_COUNT; i++) {
+        energyOrbs. push({
+          angle: (TWO_PI / CONFIG.ORB_COUNT) * i,
+          radius:  random(70, 130),
+          speed: random(0.01, 0.03),
+          size: random(6, 12),
+          pulseOffset: random(TWO_PI),
+          color: random([COLORS.cyan, COLORS.magenta, COLORS.electricBlue, COLORS.gold])
+        });
+      }
+    }
+
+    function initPortalRings() {
+      portalRings = [];
+      for (let i = 0; i < 6; i++) {
+        portalRings.push({
+          radius: 50 + i * 25,
+          rotationSpeed: (random() > 0.5 ? 1 :  -1) * random(0.01, 0.03),
+          currentAngle: random(TWO_PI),
+          segments: floor(random(8, 16)),
+          color: random([COLORS.cyan, COLORS.magenta, COLORS. gold]),
+          thickness: random(1, 2. 5)
+        });
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // MAIN DRAW LOOP
+    // ═══════════════════════════════════════════════════════════════════════
+    function draw() {
+      frameNum++;
+      updateFPS();
+
+      // Screen shake
+      push();
+      translate(screenShake. x, screenShake.y);
+      screenShake.x *= 0.9;
+      screenShake.y *= 0.9;
+
+      // Background
+      drawBackground();
+
+      // Ambient effects
+      drawAmbientGrid();
+      drawFloatingParticles();
+
+      // Hand tracking
+      if (hands.length > 0) {
+        if (! isHandPresent) {
+          isHandPresent = true;
+          handEntryTime = frameNum;
+          let idx = hands[0].keypoints[8];
+          triggerShockwave(idx. x, idx.y);
+        }
+
+        processHand(hands[0]);
+
+        if (hands.length > 1) {
+          drawSecondaryHUD(hands[1]);
+        }
+
+        updateStatus('NEXUS ACTIVE // TRACKING', true);
+      } else {
+        if (isHandPresent) {
+          isHandPresent = false;
+        }
+        drawWaitingState();
+        updateStatus('AWAITING INPUT', false);
+        trail = [];
+        gestureIntensity *= 0.95;
+      }
+
+      // Effects
+      updateAndDrawShockwaves();
+      updateParticles();
+
+      pop();
+
+      // Update animations
+      globalAngle += 0.015;
+      colorShift = (colorShift + 0.5) % 360;
+    }
+
+    function updateFPS() {
+      if (frameNum % 30 === 0) {
+        let currentTime = millis();
+        fps = Math.round(30000 / (currentTime - lastFrameTime));
+        lastFrameTime = currentTime;
+        document.getElementById('fps-counter').textContent = fps + ' FPS';
+      }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // BACKGROUND
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawBackground() {
+      push();
+
+      if (video && isVideoReady) {
+        tint(40, 50, 60);
+        image(video, 0, 0, width, height);
+      } else {
+        background(10, 15, 25);
+      }
+
+      // Dark overlay
+      noStroke();
+      fill(0, 10, 20, 180);
+      rect(0, 0, width, height);
+
+      // Scanlines
+      stroke(0, 255, 255, 6);
+      strokeWeight(1);
+      for (let y = 0; y < height; y += 3) {
+        line(0, y, width, y);
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // AMBIENT EFFECTS
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawAmbientGrid() {
+      push();
+      blendMode(ADD);
+
+      let horizon = height * 0.35;
+
+      // Grid lines
+      stroke(0, 255, 255, 12);
+      strokeWeight(1);
+
+      for (let i = 0; i < 20; i++) {
+        let x = ((i * 80 + frameNum * 0.5) % (width + 200)) - 100;
+        let x2 = width / 2 + (x - width / 2) * 0.1;
+        line(x, height, x2, horizon);
+      }
+
+      for (let i = 0; i < 12; i++) {
+        let y = map(i, 0, 12, height, horizon);
+        let alpha = map(i, 0, 12, 20, 4);
+        stroke(0, 255, 255, alpha);
+        line(0, y, width, y);
+      }
+
+      pop();
+    }
+
+    function drawFloatingParticles() {
+      push();
+      blendMode(ADD);
+      noStroke();
+
+      for (let i = 0; i < 40; i++) {
+        let x = (noise(i * 100, frameNum * 0.002) * width * 1.2) - width * 0.1;
+        let y = (noise(i * 200, frameNum * 0.001) * height * 1.2) - height * 0.1;
+        let size = noise(i * 300, frameNum * 0.005) * 3 + 1;
+        let alpha = noise(i * 400, frameNum * 0.01) * 80 + 20;
+
+        fill(0, 255, 255, alpha);
+        ellipse(x, y, size);
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // HAND PROCESSING
+    // ═══════════════════════════════════════════════════════════════════════
+    function processHand(hand) {
+      let indexTip = hand.keypoints[8];
+      let thumbTip = hand. keypoints[4];
+      let palm = hand.keypoints[9];
+      let wrist = hand.keypoints[0];
+
+      let iX = indexTip. x, iY = indexTip.y;
+      let tX = thumbTip.x, tY = thumbTip.y;
+      let pX = palm.x, pY = palm. y;
+
+      // Velocity
+      handVelocity. x = iX - lastHandPos.x;
+      handVelocity.y = iY - lastHandPos.y;
+      let speed = mag(handVelocity.x, handVelocity. y);
+      gestureIntensity = lerp(gestureIntensity, min(speed / 10, 2), 0.1);
+      lastHandPos = { x: iX, y: iY };
+
+      // Pinch
+      pinchDistance = dist(iX, iY, tX, tY);
+
+      if (lastPinchDistance > 60 && pinchDistance < 40) {
+        triggerShockwave(iX, iY);
+        spawnParticleBurst(iX, iY, 25);
+      }
+      lastPinchDistance = pinchDistance;
+
+      targetScale = map(pinchDistance, 25, 180, 0.4, 1.6);
+      targetScale = constrain(targetScale, 0.3, 2.0);
+      currentScale = lerp(currentScale, targetScale, 0.1);
+
+      // Trail
+      trail.push({ x: iX, y: iY, vx: handVelocity.x, vy: handVelocity.y });
+      if (trail.length > CONFIG.MAX_TRAIL_LENGTH) trail.shift();
+
+      // Particles on movement
+      if (speed > 8 && random() > 0.5) {
+        spawnParticle(iX, iY, handVelocity. x * 0.3, handVelocity.y * 0.3);
+      }
+
+      // Render
+      drawAdvancedTrail();
+      drawConstellation(hand, iX, iY);
+      drawMainHUD(iX, iY, currentScale);
+      drawPalmMandala(pX, pY, currentScale * 0.6);
+      drawPinchVisual(iX, iY, tX, tY, pinchDistance);
+      drawDataPanel(wrist. x, wrist. y + 70);
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // TRAIL
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawAdvancedTrail() {
+      if (trail.length < 2) return;
+
+      push();
+      blendMode(ADD);
+
+      // Ribbon
+      for (let layer = 0; layer < 3; layer++) {
+        noFill();
+        beginShape();
+        for (let i = 0; i < trail.length; i++) {
+          let t = i / trail.length;
+          let r = layer === 0 ?  lerp(0, 255, t) : 0;
+          let g = 255 - layer * 60;
+          let b = 255;
+          let alpha = t * (180 - layer * 50);
+          let weight = (t * 8 + 2) / (layer + 1);
+
+          stroke(r, g, b, alpha);
+          strokeWeight(weight);
+          curveVertex(trail[i].x, trail[i].y);
+        }
+        endShape();
+      }
+
+      // Nodes
+      for (let i = 0; i < trail.length; i += 3) {
+        let t = i / trail. length;
+        let size = t * 12 + 2;
+        let alpha = t * 150;
+
+        noStroke();
+        fill(0, 255, 255, alpha * 0.4);
+        ellipse(trail[i]. x, trail[i].y, size * 2);
+        fill(255, 255, 255, alpha);
+        ellipse(trail[i]. x, trail[i].y, size * 0.4);
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // CONSTELLATION
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawConstellation(hand, centerX, centerY) {
+      push();
+      blendMode(ADD);
+
+      let tips = [4, 8, 12, 16, 20];
+      let points = tips.map(i => ({ x: hand.keypoints[i].x, y: hand.keypoints[i].y }));
+
+      // Connections
+      for (let i = 0; i < points.length; i++) {
+        for (let j = i + 1; j < points.length; j++) {
+          let d = dist(points[i].x, points[i].y, points[j].x, points[j]. y);
+          let alpha = map(d, 0, 300, 120, 15);
+
+          stroke(0, 255, 255, alpha);
+          strokeWeight(1.5);
+          line(points[i]. x, points[i].y, points[j].x, points[j].y);
+
+          // Midpoint
+          let mx = (points[i].x + points[j].x) / 2;
+          let my = (points[i].y + points[j].y) / 2;
+          noStroke();
+          fill(255, 0, 255, 60);
+          ellipse(mx, my, 4 + sin(frameNum * 0.1 + i + j) * 2);
+        }
+      }
+
+      // Fingertip nodes
+      for (let i = 0; i < points.length; i++) {
+        let pulse = sin(frameNum * 0.15 + i) * 4 + 10;
+
+        noFill();
+        stroke(0, 255, 255, 80);
+        strokeWeight(1);
+        ellipse(points[i]. x, points[i].y, pulse * 2);
+
+        stroke(255, 0, 255, 50);
+        ellipse(points[i].x, points[i].y, pulse * 2.5);
+
+        noStroke();
+        fill(0, 255, 255, 40);
+        ellipse(points[i]. x, points[i].y, pulse);
+        fill(255, 255, 255, 180);
+        ellipse(points[i]. x, points[i].y, 5);
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // MAIN HUD
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawMainHUD(x, y, s) {
+      push();
+      translate(x, y);
+      scale(s);
+      blendMode(ADD);
+
+      // Entry animation
+      let entryProgress = min((frameNum - handEntryTime) / 25, 1);
+      let entryScale = easeOutElastic(entryProgress);
+      scale(entryScale);
+
+      // Portal rings
+      for (let ring of portalRings) {
+        push();
+        ring.currentAngle += ring.rotationSpeed;
+        rotate(ring.currentAngle);
+
+        noFill();
+        stroke(ring.color[0], ring.color[1], ring.color[2], 80);
+        strokeWeight(ring.thickness);
+        drawDashedCircle(0, 0, ring.radius, ring.segments, 0.5);
+        pop();
+      }
+
+      // Data ring
+      push();
+      rotate(-globalAngle * 0.7);
+
+      let dataR = 120;
+      noFill();
+      stroke(30, 144, 255, 50);
+      strokeWeight(16);
+      ellipse(0, 0, dataR * 2);
+
+      textFont('Courier New');
+      textSize(8);
+      textAlign(CENTER, CENTER);
+
+      for (let i = 0; i < CONFIG.NUM_DATA_POINTS; i++) {
+        let angle = (TWO_PI / CONFIG.NUM_DATA_POINTS) * i;
+        let dx = cos(angle) * dataR;
+        let dy = sin(angle) * dataR;
+
+        push();
+        translate(dx, dy);
+        rotate(-(-globalAngle * 0.7));
+
+        if (frameNum % dataNumbers[i]. updateRate === 0) {
+          dataNumbers[i].value = generateDataString();
+        }
+
+        fill(0, 255, 255, 180);
+        text(dataNumbers[i].value, 0, 0);
+        pop();
+      }
+      pop();
+
+      // Sacred geometry
+      for (let ring = 0; ring < CONFIG.NUM_SACRED_RINGS; ring++) {
+        push();
+
+        let ringRadius = 55 + ring * 20;
+        let segments = 6 + ring * 2;
+        let rotSpeed = (ring % 2 === 0 ? 1 : -1) * (0.6 + ring * 0.25);
+
+        rotate(globalAngle * rotSpeed);
+
+        noFill();
+        let alpha = 180 - ring * 35;
+
+        if (ring % 3 === 0) stroke(0, 255, 255, alpha);
+        else if (ring % 3 === 1) stroke(255, 0, 255, alpha);
+        else stroke(255, 215, 0, alpha);
+
+        strokeWeight(1.8 - ring * 0.2);
+
+        beginShape();
+        for (let i = 0; i < segments; i++) {
+          let angle = (TWO_PI / segments) * i - HALF_PI;
+          vertex(cos(angle) * ringRadius, sin(angle) * ringRadius);
+        }
+        endShape(CLOSE);
+
+        // Spokes
+        strokeWeight(0.8);
+        for (let i = 0; i < segments; i++) {
+          let angle = (TWO_PI / segments) * i - HALF_PI;
+          line(0, 0, cos(angle) * ringRadius, sin(angle) * ringRadius);
+        }
+
+        pop();
+      }
+
+      // Energy orbs
+      for (let orb of energyOrbs) {
+        orb.angle += orb.speed;
+        let ox = cos(orb.angle) * orb.radius;
+        let oy = sin(orb.angle) * orb.radius;
+        let pulse = sin(frameNum * 0.1 + orb. pulseOffset) * 3 + orb.size;
+
+        noStroke();
+        fill(orb.color[0], orb.color[1], orb.color[2], 25);
+        ellipse(ox, oy, pulse * 3);
+        fill(orb.color[0], orb.color[1], orb.color[2], 70);
+        ellipse(ox, oy, pulse * 1.4);
+        fill(255, 255, 255, 180);
+        ellipse(ox, oy, pulse * 0.35);
+      }
+
+      // Inner core triangles
+      push();
+      rotate(globalAngle * 3. 5);
+
+      let corePulse = 28 + sin(frameNum * 0.08) * 8;
+
+      stroke(255, 0, 255, 180);
+      strokeWeight(2);
+      noFill();
+      drawPolygon(0, 0, corePulse, 3);
+
+      rotate(PI);
+      stroke(0, 255, 255, 180);
+      drawPolygon(0, 0, corePulse * 0.55, 3);
+      pop();
+
+      // Central core
+      let centralPulse = 18 + sin(frameNum * 0.12) * 6;
+
+      noStroke();
+      fill(0, 80, 200, 25);
+      ellipse(0, 0, centralPulse * 4);
+      fill(0, 140, 255, 50);
+      ellipse(0, 0, centralPulse * 2. 5);
+      fill(0, 200, 255, 90);
+      ellipse(0, 0, centralPulse * 1.5);
+      fill(100, 255, 255, 160);
+      ellipse(0, 0, centralPulse);
+      fill(255, 255, 255);
+      ellipse(0, 0, centralPulse * 0.35);
+
+      // Crosshairs
+      stroke(0, 255, 255, 150);
+      strokeWeight(1);
+      line(-170, 0, -30, 0);
+      line(170, 0, 30, 0);
+      line(0, -170, 0, -30);
+      line(0, 170, 0, 30);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PALM MANDALA
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawPalmMandala(x, y, s) {
+      push();
+      translate(x, y);
+      scale(s);
+      blendMode(ADD);
+
+      for (let layer = 0; layer < 3; layer++) {
+        push();
+        rotate(globalAngle * (layer % 2 === 0 ? 1 : -1) * (1 + layer * 0.4));
+
+        let radius = 35 + layer * 20;
+        let points = 8 + layer * 4;
+
+        noFill();
+        stroke(255, 215, 0, 130 - layer * 35);
+        strokeWeight(1. 5);
+
+        beginShape();
+        for (let i = 0; i < points * 2; i++) {
+          let angle = (TWO_PI / (points * 2)) * i - HALF_PI;
+          let r = i % 2 === 0 ? radius : radius * 0.6;
+          vertex(cos(angle) * r, sin(angle) * r);
+        }
+        endShape(CLOSE);
+
+        pop();
+      }
+
+      noStroke();
+      fill(255, 215, 0, 35);
+      ellipse(0, 0, 50);
+      fill(255, 215, 0, 80);
+      ellipse(0, 0, 25);
+      fill(255, 255, 200, 180);
+      ellipse(0, 0, 8);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PINCH VISUAL
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawPinchVisual(iX, iY, tX, tY, distance) {
+      push();
+      blendMode(ADD);
+
+      let pinchAmount = map(distance, 25, 150, 1, 0);
+      pinchAmount = constrain(pinchAmount, 0, 1);
+
+      let r = lerp(0, 255, pinchAmount);
+      let g = lerp(255, 100, pinchAmount);
+      let b = 255;
+
+      // Beam
+      for (let w = 3; w >= 1; w--) {
+        stroke(r, g, b, (40 + pinchAmount * 80) / w);
+        strokeWeight(w * 2);
+        line(iX, iY, tX, tY);
+      }
+
+      // Midpoint
+      let mx = (iX + tX) / 2;
+      let my = (iY + tY) / 2;
+      let energySize = map(distance, 25, 150, 40, 12);
+
+      noStroke();
+      fill(r, g, b, 25);
+      ellipse(mx, my, energySize * 2);
+      fill(r, g, b, 60);
+      ellipse(mx, my, energySize);
+      fill(255, 255, 255, 130);
+      ellipse(mx, my, energySize * 0.25);
+
+      // Scale arc
+      noFill();
+      stroke(r, g, b, 120);
+      strokeWeight(2);
+      let indicatorAngle = map(currentScale, 0.3, 2, 0, TWO_PI);
+      arc(mx, my, energySize * 1.4, energySize * 1.4, -HALF_PI, -HALF_PI + indicatorAngle);
+
+      // Text
+      fill(r, g, b);
+      textSize(10);
+      textAlign(CENTER, CENTER);
+      textFont('Courier New');
+      text(floor(currentScale * 100) + '%', mx, my);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // DATA PANEL
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawDataPanel(x, y) {
+      push();
+      blendMode(ADD);
+      translate(x, y);
+
+      let w = 140;
+      let h = 65;
+
+      noStroke();
+      fill(0, 15, 30, 180);
+      rect(-w / 2, -h / 2, w, h, 4);
+
+      noFill();
+      stroke(0, 255, 255, 80);
+      strokeWeight(1);
+      rect(-w / 2, -h / 2, w, h, 4);
+
+      stroke(0, 255, 255, 150);
+      line(-w / 2 + 8, -h / 2 + 15, w / 2 - 8, -h / 2 + 15);
+
+      fill(0, 255, 255);
+      textSize(8);
+      textFont('Courier New');
+      textAlign(LEFT, TOP);
+      text('◈ STATUS', -w / 2 + 8, -h / 2 + 4);
+
+      let dataY = -h / 2 + 20;
+      let lh = 12;
+
+      fill(180, 180, 180);
+      text('SCALE:', -w / 2 + 8, dataY);
+      fill(0, 255, 255);
+      text((currentScale * 100).toFixed(0) + '%', 15, dataY);
+
+      fill(180, 180, 180);
+      text('DIST:', -w / 2 + 8, dataY + lh);
+      fill(0, 255, 255);
+      text(pinchDistance.toFixed(0) + 'px', 10, dataY + lh);
+
+      fill(180, 180, 180);
+      text('VEL:', -w / 2 + 8, dataY + lh * 2);
+      fill(gestureIntensity > 1 ? color(255, 0, 255) : color(0, 255, 255));
+      text(gestureIntensity. toFixed(2), 5, dataY + lh * 2);
+
+      // Active dot
+      let pulse = sin(frameNum * 0.1) * 0.3 + 0.7;
+      fill(0, 255, 100, 255 * pulse);
+      noStroke();
+      ellipse(w / 2 - 12, -h / 2 + 10, 5);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SECONDARY HUD
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawSecondaryHUD(hand) {
+      let index = hand.keypoints[8];
+
+      push();
+      translate(index.x, index. y);
+      blendMode(ADD);
+
+      for (let i = 0; i < 3; i++) {
+        push();
+        rotate(globalAngle * (i % 2 === 0 ? 1 :  -1) * (1 + i * 0.4));
+
+        noFill();
+        stroke(255, 0, 255, 130 - i * 35);
+        strokeWeight(1.8);
+        ellipse(0, 0, 55 + i * 25);
+
+        let segments = 6 + i * 2;
+        for (let j = 0; j < segments; j++) {
+          let angle = (TWO_PI / segments) * j;
+          let r = 27 + i * 12;
+          stroke(255, 0, 255, 60);
+          line(0, 0, cos(angle) * r, sin(angle) * r);
+        }
+
+        pop();
+      }
+
+      noStroke();
+      fill(255, 0, 255, 80);
+      ellipse(0, 0, 18);
+      fill(255, 200, 255, 180);
+      ellipse(0, 0, 7);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // WAITING STATE
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawWaitingState() {
+      push();
+      blendMode(ADD);
+      translate(width / 2, height / 2);
+
+      // Pulsing circles
+      for (let i = 0; i < 4; i++) {
+        let delay = i * 0.25;
+        let pulse = sin(frameNum * 0.03 - delay) * 25;
+        let alpha = 70 - i * 15 + sin(frameNum * 0.05 - delay) * 15;
+
+        noFill();
+        stroke(0, 255, 255, alpha);
+        strokeWeight(1. 8 - i * 0.3);
+        ellipse(0, 0, 70 + i * 35 + pulse);
+      }
+
+      // Scan line
+      push();
+      rotate(globalAngle * 2);
+      stroke(0, 255, 255, 80);
+      strokeWeight(2);
+      line(0, 0, 130, 0);
+
+      noStroke();
+      fill(0, 255, 255, 25);
+      arc(0, 0, 260, 260, -0.08, 0.08);
+      pop();
+
+      // Text
+      fill(0, 255, 255, 140 + sin(frameNum * 0.05) * 40);
+      textSize(15);
+      textFont('Courier New');
+      textAlign(CENTER, CENTER);
+      text('◈ AWAITING INPUT ◈', 0, 0);
+
+      textSize(10);
+      fill(0, 255, 255, 80);
+      text('Show hand to activate', 0, 28);
+
+      // Corner brackets
+      let offset = 90;
+      stroke(0, 255, 255, 60);
+      strokeWeight(1);
+      let bs = 18 + sin(frameNum * 0.05) * 4;
+
+      line(-offset, -offset, -offset + bs, -offset);
+      line(-offset, -offset, -offset, -offset + bs);
+      line(offset, -offset, offset - bs, -offset);
+      line(offset, -offset, offset, -offset + bs);
+      line(-offset, offset, -offset + bs, offset);
+      line(-offset, offset, -offset, offset - bs);
+      line(offset, offset, offset - bs, offset);
+      line(offset, offset, offset, offset - bs);
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // PARTICLE SYSTEM
+    // ═══════════════════════════════════════════════════════════════════════
+    function spawnParticle(x, y, vx, vy) {
+      if (particles.length >= CONFIG.MAX_PARTICLES) return;
+
+      particles.push({
+        x: x,
+        y: y,
+        vx:  vx + random(-2, 2),
+        vy: vy + random(-2, 2),
+        life: 1.0,
+        decay: random(0.015, 0.035),
+        size: random(3, 7),
+        color: random([COLORS. cyan, COLORS.magenta, COLORS. electricBlue, COLORS.gold])
+      });
+    }
+
+    function spawnParticleBurst(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        let angle = random(TWO_PI);
+        let speed = random(2, 7);
+        spawnParticle(x, y, cos(angle) * speed, sin(angle) * speed);
+      }
+    }
+
+    function updateParticles() {
+      push();
+      blendMode(ADD);
+      noStroke();
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+
+        p.x += p. vx;
+        p.y += p.vy;
+        p.vx *= 0.97;
+        p. vy *= 0.97;
+        p. vy += 0.04;
+        p.life -= p.decay;
+
+        if (p. life > 0) {
+          let alpha = p.life * 220;
+          fill(p.color[0], p.color[1], p. color[2], alpha * 0.3);
+          ellipse(p.x, p.y, p.size * 1.8);
+          fill(p.color[0], p.color[1], p. color[2], alpha);
+          ellipse(p. x, p.y, p.size * p.life);
+        } else {
+          particles.splice(i, 1);
+        }
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // SHOCKWAVE SYSTEM
+    // ═══════════════════════════════════════════════════════════════════════
+    function triggerShockwave(x, y) {
+      shockwaves.push({
+        x:  x,
+        y: y,
+        radius: 10,
+        maxRadius: 180,
+        speed: 7,
+        life: 1.0
+      });
+
+      screenShake. x = random(-8, 8);
+      screenShake. y = random(-8, 8);
+    }
+
+    function updateAndDrawShockwaves() {
+      push();
+      blendMode(ADD);
+      noFill();
+
+      for (let i = shockwaves.length - 1; i >= 0; i--) {
+        let sw = shockwaves[i];
+
+        sw.radius += sw.speed;
+        sw.life = 1 - (sw.radius / sw.maxRadius);
+
+        if (sw.life > 0) {
+          for (let j = 0; j < 3; j++) {
+            let ringRadius = sw.radius - j * 12;
+            if (ringRadius > 0) {
+              let alpha = sw.life * 180 * (1 - j * 0.3);
+              stroke(0, 255, 255, alpha);
+              strokeWeight(2. 5 - j * 0.7);
+              ellipse(sw.x, sw.y, ringRadius * 2);
+            }
+          }
+        } else {
+          shockwaves.splice(i, 1);
+        }
+      }
+
+      pop();
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // HELPER FUNCTIONS
+    // ═══════════════════════════════════════════════════════════════════════
+    function drawDashedCircle(x, y, radius, segments, dashRatio) {
+      let segmentAngle = TWO_PI / segments;
+      let dashAngle = segmentAngle * dashRatio;
+
+      for (let i = 0; i < segments; i++) {
+        let startAngle = segmentAngle * i;
+        arc(x, y, radius * 2, radius * 2, startAngle, startAngle + dashAngle);
+      }
+    }
+
+    function drawPolygon(x, y, radius, sides) {
+      beginShape();
+      for (let i = 0; i < sides; i++) {
+        let angle = (TWO_PI / sides) * i - HALF_PI;
+        vertex(x + cos(angle) * radius, y + sin(angle) * radius);
+      }
+      endShape(CLOSE);
+    }
+
+    function easeOutElastic(t) {
+      if (t === 0 || t === 1) return t;
+      const c4 = (2 * Math.PI) / 3;
+      return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+    }
+  </script>
+</body>
+</html>
