@@ -27,7 +27,7 @@ function Notes() {
   const [replaceWith, setReplaceWith] = useState('');
   const [fileName, setFileName] = useState('study-notes');
   const [modelUsed, setModelUsed] = useState('');
-  const [selectedModelForGeneration, setSelectedModelForGeneration] = useState('gemini-2.5-pro');
+  const [selectedModelForGeneration, setSelectedModelForGeneration] = useState('gemini-2.5-flash');
   const [showSuccessNotification, setShowSuccessNotification] = useState(false);
 
   const textareaRef = useRef(null);
